@@ -1,0 +1,76 @@
+---
+title: "Data Wrangling"
+author: "Tony Jiang"
+date: "2023-04-05"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## library packages
+
+```{r warning=FALSE, message=FALSE}
+
+library(tseries)
+library(lubridate)
+library(here)
+library(tidyverse)
+library(outliers)
+
+```
+
+## load the data
+
+```{r warning=FALSE}
+
+# automatically set the working directory as personal local path to R project
+# so the file path in read.csv can work for everyone
+setwd(here())
+
+# load the data
+HHprice_original <- read.csv("./Data/HH Spot Price.csv", header = TRUE, 
+                             col.names = c("year", "price")
+                             )
+
+# examine whether there is missing value or not
+summary(HHprice_original)
+  # there is no missing value
+
+# convert the year column to date format
+HHprice_original$year <- ymd(HHprice_original$year)
+
+# check for outliers
+outlier(HHprice_original$price)
+HHprice_original[which.max(HHprice_original$price), ]
+  # October 2005 had a high price of natural gas, we need to analyze what 
+  # happened here to determine how we would like to deal with this outlier
+
+```
+## prepare a time series for further modeling
+
+```{r warning=FALSE}
+
+ts_HHprice <- ts(HHprice_original$price, start = c(1997, 1),
+                 frequency = 12)
+
+# since the data is cut off at March 2021, maybe we can leave the last 15 months 
+# for forward looking test, which means we will subset the data ending 
+# at Dec 2019 for training purpose
+
+# set the number of months we will need to forecast for 
+# testing model performance
+no_test <- 15
+nrow <- length(ts_HHprice)
+
+# subset the time series without the last 15 months for training purpose
+ts_HHprice_train <- ts_HHprice[1:(nrow - no_test)] %>% 
+  ts(start = c(1997, 1), frequency = 12)
+
+# subset the time series having only the last 15 months for accuracy test
+ts_HHprice_test <- ts_HHprice[(nrow - no_test + 1):nrow] %>% 
+  ts(start = c(2020, 1), frequency = 12)
+
+```
+
