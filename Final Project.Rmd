@@ -134,12 +134,20 @@ Pacf(ts_gas_ns, lag.max=40, main="PACF Non-Seasonal Gas")
 
 
 ```{r}
-#forecast SARIMA
+#forecast Electricity SARIMA
 
 arima.e.model<-auto.arima(window(ts_electricity, end=c(2022,1)))
 arima.e.forecast<-forecast(arima.e.model, h=12)
 
-autoplot(arima.e.forecast)
-autolayer(ts_electricity)
+autoplot(ts_electricity)+
+autolayer(arima.e.forecast$mean)
+
+
+#Gas SARIMA forecast
+arima.gas.model<-auto.arima(window(ts_gas_equiv, end=c(2022,1)))
+arima.gas.forecast<-forecast(arima.gas.model, h=12)
+
+autoplot(ts_gas_equiv)+
+autolayer(arima.gas.forecast$mean)
 ```
 
