@@ -9,22 +9,93 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## library packages
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r warning=FALSE, message=FALSE}
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+library(tseries)
+library(lubridate)
+library(here)
+library(tidyverse)
+library(outliers)
+library(ggplot2)
+library(forecast)
 
-```{r cars}
-summary(cars)
 ```
 
-## Including Plots
+## load the data
 
-You can also embed plots, for example:
+```{r warning=FALSE}
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+# automatically set the working directory as personal local path to R project
+# so the file path in read.csv can work for everyone
+setwd(here())
+
+# load the data
+electricity_prices.df <- read.csv("./Data/Average_retail_price_of_electricity.csv", header = TRUE, skip=4)
+
+nc_electricity.df<-electricity_prices.df[228,4:(ncol(electricity_prices.df))]%>%pivot_longer(cols=everything(), names_to = 'my_date', values_to = 'price_per_kWh')
+
+# examine whether there is missing value or not
+summary(nc_electricity.df)
+# there is no missing value
+
+nc_electricity.df$price_per_kWh<-as.numeric(nc_electricity.df$price_per_kWh)
+
+ts_electricity<-ts(rev(nc_electricity.df[,2]), start=c(2001,1), frequency=12)
+
+plot(ts_electricity, col="red", ylab="$/kWh", xlab="Date", main="NC Residential Electricity Cost")
+  
+
+# Import Natural Gas data
+
+natural_gas.df <- read.csv("./Data/NC_NaturalGas.csv", header = TRUE, skip=2,col.names = c("year", "price"))
+
+#Check for missing data. There is an extra row with an NA at the end of the data, so I removed it with na.omit
+
+summary(na.omit(natural_gas.df))
+
+#create timeseries for natural gas
+
+ts_NG<-ts(na.omit(natural_gas.df[,2]), start=c(1989,1), frequency=12)
+
+# plot raw timeseries
+plot(ts_NG, col="blue", ylab="$/Mcf", xlab="Date", main="NC Residential Natural Gas Cost")
+
+
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r, warning=FALSE}
+# convert natural gas data from $/Mcf to $/kWh based on 80% heating efficiency
+
+natural_gas.df$kwh_equiv<-(natural_gas.df$price/2.431318)
+
+natural_gas.df<-na.omit(natural_gas.df)
+
+ts_gas_equiv<-ts(natural_gas.df[,3], start=c(1989,1), frequency=12)
+
+ts_gas_equiv<-window(ts_gas_equiv, start=c(2001, 1))
+
+autoplot(ts_gas_equiv)
+
+
+
+
+ts.plot(ts_gas_equiv, ts_electricity, gpars = list(col = c("red", "blue")), xlab="Date", ylab="cents/kWh", main="Comparison of Natural Gas and Electricity Costs")
+legend("topleft", bty="n", lty=c(1,1), col=c("red","blue"),
+       legend=c(" Natural Gas ", " Electricity "))
+
+#Create Dataframe with both Gas & Electricity prices
+
+
+new_date<-seq(as.Date("2001/1/1"), by = "month", length.out = nrow(ts_electricity))
+
+nc_energy.df<-cbind.data.frame("Month_Date"=new_date,"electricity"=nc_electricity.df$price_per_kWh,"gas_equiv"=ts_gas_equiv)
+
+#Subtract Gas price from Electricity price
+nc_energy.df$cost_diff<-(nc_energy.df$electricity - nc_energy.df$gas_equiv)
+
+```
+
