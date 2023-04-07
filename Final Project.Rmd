@@ -20,6 +20,7 @@ library(tidyverse)
 library(outliers)
 library(ggplot2)
 library(forecast)
+library(kableExtra)
 
 ```
 
@@ -34,7 +35,8 @@ setwd(here())
 # load the data
 electricity_prices.df <- read.csv("./Data/Average_retail_price_of_electricity.csv", header = TRUE, skip=4)
 
-nc_electricity.df<-electricity_prices.df[228,4:(ncol(electricity_prices.df))]%>%pivot_longer(cols=everything(), names_to = 'my_date', values_to = 'price_per_kWh')
+nc_electricity.df<-electricity_prices.df[228,4:(ncol(electricity_prices.df))] %>%
+  pivot_longer(cols=everything(), names_to = 'my_date', values_to = 'price_per_kWh')
 
 # examine whether there is missing value or not
 summary(nc_electricity.df)
@@ -54,6 +56,7 @@ natural_gas.df <- read.csv("./Data/NC_NaturalGas.csv", header = TRUE, skip=2,col
 #Check for missing data. There is an extra row with an NA at the end of the data, so I removed it with na.omit
 
 summary(na.omit(natural_gas.df))
+str(natural_gas.df)
 
 #create timeseries for natural gas
 
@@ -67,10 +70,14 @@ plot(ts_NG, col="blue", ylab="$/Mcf", xlab="Date", main="NC Residential Natural 
 ```
 
 
+## standardize the unit of natural gas data to make it comparable with electricity
 ```{r, warning=FALSE}
 # convert natural gas data from $/Mcf to $/kWh based on 80% heating efficiency
+# $/kWh = [($/mcf/1.037)/293.07107]/0.9 = $/mcf/273.52
+conversion <- 0.8*293.07107*1.037
 
-natural_gas.df$kwh_equiv<-(natural_gas.df$price/2.431318)
+natural_gas.df$kwh_equiv<-(natural_gas.df$price/conversion)
+
 
 natural_gas.df<-na.omit(natural_gas.df)
 
@@ -81,9 +88,9 @@ ts_gas_equiv<-window(ts_gas_equiv, start=c(2001, 1))
 autoplot(ts_gas_equiv)
 
 
-
-
-ts.plot(ts_gas_equiv, ts_electricity, gpars = list(col = c("red", "blue")), xlab="Date", ylab="cents/kWh", main="Comparison of Natural Gas and Electricity Costs")
+ts.plot(ts_gas_equiv, ts_electricity, gpars = list(col = c("red", "blue")), 
+        xlab="Date", ylab="cents/kWh", 
+        main="Comparison of Natural Gas and Electricity Costs")
 legend("topleft", bty="n", lty=c(1,1), col=c("red","blue"),
        legend=c(" Natural Gas ", " Electricity "))
 
@@ -92,7 +99,9 @@ legend("topleft", bty="n", lty=c(1,1), col=c("red","blue"),
 new_date<-seq(as.Date("2001/1/1"), by = "month", length.out = nrow(ts_electricity))
 
 #bind date, gas, & electricity
-nc_energy.df<-cbind.data.frame("Month_Date"=new_date,"electricity"=nc_electricity.df$price_per_kWh,"gas_equiv"=ts_gas_equiv)
+nc_energy.df<-cbind.data.frame("Month_Date"=new_date, 
+                               "electricity"=nc_electricity.df$price_per_kWh, 
+                               "gas_equiv"=ts_gas_equiv)
 
 #Subtract Gas price from Electricity price
 nc_energy.df$cost_diff<-(nc_energy.df$electricity - nc_energy.df$gas_equiv)
@@ -112,7 +121,10 @@ ts_gas_ns<-(ts_NG-decomp_gas$seasonal)
 
 ```
 
+## plot ACF and PACF to see the general pattern of two series
 ```{r}
+
+# ACF and PACF of electricity data
 par(mfrow=c(1,2))
 Acf(ts_electricity, lag.max=40, main="ACF Electricity")
 Acf(ts_elec_ns, lag.max=40, main="ACF Non-Seasonal Electricity")
@@ -121,8 +133,7 @@ par(mfrow=c(1,2))
 Pacf(ts_electricity, lag.max=40, main="PACF Electricity")
 Pacf(ts_elec_ns, lag.max=40, main="PACF Non-Seasonal Electricity")
 
-
-
+# ACF and PACF of natural gas data
 par(mfrow=c(1,2))
 Acf(ts_NG, lag.max=40, main="ACF Natural Gas")
 Acf(ts_gas_ns, lag.max=40, main="ACF Non-Seasonal Gas")
@@ -133,6 +144,7 @@ Pacf(ts_gas_ns, lag.max=40, main="PACF Non-Seasonal Gas")
 ```
 
 
+## Use seasonal Arima to model eletricity and natural gas
 ```{r}
 #forecast Electricity SARIMA
 
@@ -141,7 +153,7 @@ arima.e.forecast<-forecast(arima.e.model, h=12)
 
 autoplot(ts_electricity)+
 autolayer(arima.e.forecast$mean)
-
+  # performance is not that good
 
 #Gas SARIMA forecast
 arima.gas.model<-auto.arima(window(ts_gas_equiv, end=c(2022,1)))
@@ -149,5 +161,204 @@ arima.gas.forecast<-forecast(arima.gas.model, h=12)
 
 autoplot(ts_gas_equiv)+
 autolayer(arima.gas.forecast$mean)
+  # performance is not that good
+```
+### Examine seasonal Arima model's performance on electricity and NG data
+```{r}
+
+# model performance for electricity data
+sarima_e_perf <- ts_electricity %>% 
+  window(start = c(2022, 2)) %>% 
+  accuracy(arima.e.forecast$mean)
+
+# model performance for gas data
+sarima_gas_perf <- ts_gas_equiv %>% 
+  window(start = c(2022, 2)) %>% 
+  accuracy(arima.gas.forecast$mean)
+
+```
+
+
+## Use Arima with Fourier terms to model
+```{r}
+# arima with fourier terms for eletricity
+arima.e.four.forecast <- ts_electricity %>% 
+  window(end = c(2022, 1)) %>% 
+  auto.arima(xreg = fourier(window(ts_electricity, end = c(2022, 1)), 
+                            K = 6)
+             ) %>% 
+  forecast(xreg = fourier(window(ts_electricity, 
+                                 end = c(2022, 1)
+                                 ),
+                          K = 6,
+                          h = 12), 
+           h = 12)
+
+# arima with fourier terms for gas
+arima.gas.four.forecast <- ts_gas_equiv %>% 
+  window(end = c(2022, 1)) %>% 
+  auto.arima(xreg = fourier(window(ts_gas_equiv, end = c(2022, 1)), 
+                            K = 6)
+             )%>% 
+  forecast(xreg = fourier(window(ts_gas_equiv, 
+                                 end = c(2022, 1)
+                                 ),
+                          K = 6,
+                          h = 12), 
+           h = 12)
+```
+### Examine Arima with fourier's performance on electricity and NG data
+```{r}
+
+# model performance for electricity data
+arima_four_e_perf <- ts_electricity %>% 
+  window(start = c(2022, 2)) %>% 
+  accuracy(arima.e.four.forecast$mean)
+
+# model performance for gas data
+arima_four_gas_perf <- ts_gas_equiv %>% 
+  window(start = c(2022, 2)) %>% 
+  accuracy(arima.gas.four.forecast$mean)
+
+```
+
+## Use STL to model
+```{r}
+# arima with fourier terms for eletricity
+stl.e.forecast <- ts_electricity %>% 
+  window(end = c(2022, 1)) %>% 
+  stlf(h = 12)
+
+# arima with fourier terms for gas
+stl.gas.forecast <- ts_gas_equiv %>% 
+  window(end = c(2022, 1)) %>% 
+  stlf(h = 12)
+      
+```
+### Examine STL's performance on electricity and NG data
+```{r}
+
+# model performance for electricity data
+stl_e_perf <- ts_electricity %>% 
+  window(start = c(2022, 2)) %>% 
+  accuracy(stl.e.forecast$mean)
+
+# model performance for gas data
+stl_gas_perf <- ts_gas_equiv %>% 
+  window(start = c(2022, 2)) %>% 
+  accuracy(stl.gas.forecast$mean)
+
+```
+
+
+## Use Neural Network and fourier to model
+```{r}
+# neural network forecast for electricity data
+nn.e.forecast <- ts_electricity %>% 
+  window(end = c(2022 ,1)) %>% 
+  nnetar(p = 1, P = 1,
+         xreg = fourier(window(ts_electricity, 
+                               end = c(2022, 1)
+                               ),
+                        K = 6)
+         ) %>% 
+  forecast(xreg = fourier(window(ts_electricity, 
+                                 end = c(2022, 1)
+                                 ),
+                          K = 6, # a single K should be smaller than period/2
+                          h = 12),
+           h = 12)
+
+# neural network forecast for gas data
+nn.gas.forecast <- ts_gas_equiv %>% 
+  window(end = c(2022 ,1)) %>% 
+  nnetar(p = 1, P = 1,
+         xreg = fourier(window(ts_gas_equiv, 
+                               end = c(2022, 1)
+                               ),
+                        K = 6)
+         ) %>% 
+  forecast(xreg = fourier(window(ts_gas_equiv, 
+                                 end = c(2022, 1)
+                                 ),
+                          K = 6,
+                          h = 12),
+           h = 12)
+```
+
+### neutral network model performance
+```{r}
+
+# neural network model performance for electricity data
+nn_e_perf <- ts_electricity %>% 
+  window(start = c(2022, 2)) %>% 
+  accuracy(nn.e.forecast$mean)
+
+# neural network model performance for gas data
+nn_gas_perf <- ts_gas_equiv %>% 
+  window(start = c(2022, 2)) %>% 
+  accuracy(nn.gas.forecast$mean)
+```
+
+
+## compare performance scores and generate tables for use
+```{r}
+# scores for electricity
+scores.e <- rbind(sarima_e_perf, 
+                  arima_four_e_perf,
+                  stl_e_perf,
+                  nn_e_perf) %>% 
+  as.data.frame()
+
+  # rename rows
+row.names(scores.e) <- c("SARIMA", 
+                         "ARIMA with Fourier", 
+                         "STL",
+                         "Neural Network")
+
+  # find the row index of the lowest RMSE
+best.e.model <- scores.e$RMSE %>% 
+  which.min() 
+
+cat("The best model for electricity by RMSE is: ", 
+    row.names(scores.e[best.e.model, ]))
+
+# generate a visualized table to use in the report
+kbl(scores.e,
+    caption = "Forecast Accuracy for NC Residential Electricity Price",
+    digits = array(5, ncol(scores.e))) %>% 
+  kable_styling(full_width = FALSE, position = "center", 
+                latex_options = "hold_position") %>% 
+  kable_styling(latex_options = "striped", 
+                stripe_index = best.e.model)
+
+# scores for gas
+scores.gas <- rbind(sarima_gas_perf, 
+                  arima_four_gas_perf,
+                  stl_gas_perf,
+                  nn_gas_perf) %>% 
+  as.data.frame()
+
+  # rename rows
+row.names(scores.gas) <- c("SARIMA", 
+                         "ARIMA with Fourier", 
+                         "STL",
+                         "Neural Network")
+
+  # find the row index of the lowest RMSE
+best.gas.model <- scores.gas$RMSE %>% 
+  which.min() 
+
+cat("The best model for natural gas by RMSE is: ", 
+    row.names(scores.gas[best.gas.model, ]))
+
+# generate a visualized table to use in the report
+kbl(scores.gas,
+    caption = "Forecast Accuracy for NC Residential Natural Gas Price",
+    digits = array(5, ncol(scores.gas))) %>% 
+  kable_styling(full_width = FALSE, position = "center", 
+                latex_options = "hold_position") %>% 
+  kable_styling(latex_options = "striped", 
+                stripe_index = best.gas.model)
 ```
 
