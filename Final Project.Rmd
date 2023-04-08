@@ -74,7 +74,7 @@ plot(ts_NG, col="blue", ylab="$/Mcf", xlab="Date", main="NC Residential Natural 
 ```{r, warning=FALSE}
 # convert natural gas data from $/Mcf to $/kWh based on 80% heating efficiency
 # $/kWh = [($/mcf/1.037)/293.07107]/0.9 = $/mcf/273.52
-conversion <- 0.8*293.07107*1.037
+conversion <- 0.8*2.9307107*1.037
 
 natural_gas.df$kwh_equiv<-(natural_gas.df$price/conversion)
 
