@@ -74,7 +74,15 @@ plot(ts_NG, col="blue", ylab="$/Mcf", xlab="Date", main="NC Residential Natural 
 ```{r, warning=FALSE}
 # convert natural gas data from $/Mcf to $/kWh based on 80% heating efficiency
 # $/kWh = [($/mcf/1.037)/293.07107]/0.9 = $/mcf/273.52
+<<<<<<< Updated upstream
 conversion <- 0.8*2.9307107*1.037
+=======
+<<<<<<< HEAD
+conversion <- 0.8*293.07107*1.037/100
+=======
+conversion <- 0.8*2.9307107*1.037
+>>>>>>> ff40481b1644c680b460de0dc07cd6e382a0ac84
+>>>>>>> Stashed changes
 
 natural_gas.df$kwh_equiv<-(natural_gas.df$price/conversion)
 
@@ -360,5 +368,26 @@ kbl(scores.gas,
                 latex_options = "hold_position") %>% 
   kable_styling(latex_options = "striped", 
                 stripe_index = best.gas.model)
+```
+
+## Use STL to model electricity and natural gas for the next 12 month
+```{r}
+
+e.forecast.2324 <- ts_electricity %>% 
+  stlf(h = 12)
+
+gas.forecast.2324 <- ts_gas_equiv %>% 
+  stlf(h = 12)
+
+e.forecast.2324$mean %>% 
+  autoplot() +
+  autolayer(e.forecast.2324$mean, series = "electricity forecast for 23-24") +
+  autolayer(gas.forecast.2324$mean, series = "gas forecast for 23-24") +
+  autolayer(window(ts_electricity, start = c(2017, 1)), 
+            series = "historical data for electricity") +
+   autolayer(window(ts_gas_equiv, start = c(2017, 1)), 
+            series = "historical data for natural gas")
+
+
 ```
 
