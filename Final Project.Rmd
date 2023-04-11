@@ -119,6 +119,11 @@ nc_energy.df$cost_diff<-(nc_energy.df$electricity - nc_energy.df$gas_equiv)
 decomp_elec<-decompose(ts_electricity, type="additive")
 decomp_gas<-decompose(ts_NG, type="multiplicative")
 
+ts_NG %>% 
+  window(start = c(2013,1), end = c(2023,1)) %>%
+  stl(s.window = "periodic") %>% 
+  plot()
+
 plot(decomp_elec)
 plot(decomp_gas)
 #remove seasonality
