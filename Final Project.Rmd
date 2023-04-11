@@ -1,6 +1,6 @@
 ---
 title: "Visionary Final"
-author: "Justin DePue"
+author: "Justin DePue, John Rooney, and Tony Jiang"
 date: "`r Sys.Date()`"
 output: pdf_document
 ---
@@ -88,7 +88,9 @@ ts_gas_equiv<-ts(natural_gas.df[,3], start=c(1989,1), frequency=12)
 
 ts_gas_equiv<-window(ts_gas_equiv, start=c(2001, 1))
 
-autoplot(ts_gas_equiv)
+autoplot(ts_gas_equiv) +
+  ylab("Price (cents/kWh") + 
+  ggtitle("Natural Gas Price (cents/kWh)")
 
 
 ts.plot(ts_gas_equiv, ts_electricity, gpars = list(col = c("red", "blue")), 
@@ -154,8 +156,10 @@ Pacf(ts_gas_ns, lag.max=40, main="PACF Non-Seasonal Gas")
 arima.e.model<-auto.arima(window(ts_electricity, end=c(2022,1)))
 arima.e.forecast<-forecast(arima.e.model, h=12)
 
-autoplot(ts_electricity)+
-autolayer(arima.e.forecast$mean)
+autoplot(ts_electricity) +
+  autolayer(arima.e.forecast$mean, series = "SARIMA") +
+  ylab("Price (cents/kWh)") +
+  ggtitle("Electricity - SARIMA")
   # performance is not that good
 
 #Gas SARIMA forecast
@@ -163,7 +167,9 @@ arima.gas.model<-auto.arima(window(ts_gas_equiv, end=c(2022,1)))
 arima.gas.forecast<-forecast(arima.gas.model, h=12)
 
 autoplot(ts_gas_equiv)+
-autolayer(arima.gas.forecast$mean)
+  autolayer(arima.gas.forecast$mean, series = "SARIMA") +
+  ylab("Price (cents/kWh)") +
+  ggtitle("Natural Gas - SARIMA")
   # performance is not that good
 ```
 ### Examine seasonal Arima model's performance on electricity and NG data
@@ -173,6 +179,7 @@ autolayer(arima.gas.forecast$mean)
 sarima_e_perf <- ts_electricity %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(arima.e.forecast$mean)
+
 
 # model performance for gas data
 sarima_gas_perf <- ts_gas_equiv %>% 
@@ -197,18 +204,29 @@ arima.e.four.forecast <- ts_electricity %>%
                           h = 12), 
            h = 12)
 
+autoplot(arima.e.four.forecast$mean, series = "ARIMA with Fourier Terms") +
+  autolayer(ts_electricity, series = "Historical Data") +
+  ggtitle("Electricity - ARIMA with Fourier Terms") +
+  ylab("Price (cents/kWh)")
+
 # arima with fourier terms for gas
 arima.gas.four.forecast <- ts_gas_equiv %>% 
   window(end = c(2022, 1)) %>% 
   auto.arima(xreg = fourier(window(ts_gas_equiv, end = c(2022, 1)), 
                             K = 6)
-             )%>% 
+             ) %>% 
   forecast(xreg = fourier(window(ts_gas_equiv, 
                                  end = c(2022, 1)
                                  ),
                           K = 6,
                           h = 12), 
            h = 12)
+
+autoplot(arima.gas.four.forecast$mean, series = "ARIMA with Fourier Terms") +
+  autolayer(ts_gas_equiv, series = "Historical Data") +
+  ggtitle("Natural Gas - ARIMA with Fourier Terms") +
+  ylab("Price (cents/kWh)")
+
 ```
 ### Examine Arima with fourier's performance on electricity and NG data
 ```{r}
@@ -227,16 +245,25 @@ arima_four_gas_perf <- ts_gas_equiv %>%
 
 ## Use STL to model
 ```{r}
-# arima with fourier terms for eletricity
+# STL for eletricity
 stl.e.forecast <- ts_electricity %>% 
   window(end = c(2022, 1)) %>% 
   stlf(h = 12)
 
-# arima with fourier terms for gas
+autoplot(stl.e.forecast$mean, series = "STL + ETS") +
+  autolayer(ts_electricity, series = "Historical Data") +
+  ggtitle("Electricity - STL + EST") +
+  ylab("Price (cents/kWh)")
+
+# STL for gas
 stl.gas.forecast <- ts_gas_equiv %>% 
   window(end = c(2022, 1)) %>% 
   stlf(h = 12)
-      
+
+autoplot(ts_gas_equiv, series = "Historical Data") +
+  autolayer(stl.gas.forecast$mean, series = "STL + ETS") +
+  ggtitle("Natural Gas - STL + EST") +
+  ylab("Price (cents/kWh)")
 ```
 ### Examine STL's performance on electricity and NG data
 ```{r}
@@ -287,6 +314,17 @@ nn.gas.forecast <- ts_gas_equiv %>%
                           K = 6,
                           h = 12),
            h = 12)
+
+
+autoplot(nn.e.forecast$mean, series = "Neural Network") +
+  autolayer(ts_electricity, series = "Historical Data") +
+  ggtitle("Electricity - Neural Network") +
+  ylab("Price (cents/kWh)")
+
+autoplot(nn.gas.forecast$mean, series = "Neural Network") +
+  autolayer(ts_gas_equiv, series = "Historical Data") +
+  ggtitle("Natural Gas - Neural Network") +
+  ylab("Price (cents/kWh)")
 ```
 
 ### neutral network model performance
@@ -306,6 +344,30 @@ nn_gas_perf <- ts_gas_equiv %>%
 
 ## compare performance scores and generate tables for use
 ```{r}
+# plot these together
+ts_electricity %>% 
+  window(start = c(2016, 1)) %>% 
+  autoplot(series = "Historical Series") +
+  autolayer(nn.e.forecast$mean, series = "Neural Network") +
+  autolayer(arima.e.forecast$mean, series = "SARIMA") +
+  autolayer(arima.e.four.forecast$mean, series = "ARIMA with Fourier Terms") +
+  autolayer(stl.e.forecast$mean, series = "STL + EST") +
+  ylab("Price (cents/kWh)") +
+  ggtitle("Comparision of Four Modeling Methods - Electricity") +
+  theme_classic()
+
+  
+ts_gas_equiv %>% 
+  window(start = c(2016, 1)) %>% 
+  autoplot(series = "Historical Series") +
+  autolayer(nn.gas.forecast$mean, series = "Neural Network") +
+  autolayer(arima.gas.forecast$mean, series = "SARIMA") +
+  autolayer(arima.gas.four.forecast$mean, series = "ARIMA with Fourier Terms") +
+  autolayer(stl.gas.forecast$mean, series = "STL + EST") +
+  ylab("Price (cents/kWh)") +
+  ggtitle("Comparision of Four Modeling Methods - Natural Gas") +
+  theme_classic()
+
 # scores for electricity
 scores.e <- rbind(sarima_e_perf, 
                   arima_four_e_perf,
@@ -333,7 +395,8 @@ kbl(scores.e,
   kable_styling(full_width = FALSE, position = "center", 
                 latex_options = "hold_position") %>% 
   kable_styling(latex_options = "striped", 
-                stripe_index = best.e.model)
+                stripe_index = best.e.model,
+                stripe_color = "red")
 
 # scores for gas
 scores.gas <- rbind(sarima_gas_perf, 
@@ -362,7 +425,8 @@ kbl(scores.gas,
   kable_styling(full_width = FALSE, position = "center", 
                 latex_options = "hold_position") %>% 
   kable_styling(latex_options = "striped", 
-                stripe_index = best.gas.model)
+                stripe_index = best.gas.model,
+                stripe_color = "red")
 ```
 
 ## Use STL to model electricity and natural gas for the next 12 month
@@ -381,7 +445,11 @@ e.forecast.2324$mean %>%
   autolayer(window(ts_electricity, start = c(2017, 1)), 
             series = "historical data for electricity") +
    autolayer(window(ts_gas_equiv, start = c(2017, 1)), 
-            series = "historical data for natural gas")
+            series = "historical data for natural gas") +
+  theme_classic() +
+  ggtitle("Forecast of Electricity and Natural Gas Price for the Next 12 Months") +
+  ylab("Price (cents/kWh)")
+  
 
 
 ```
