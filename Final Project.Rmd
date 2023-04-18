@@ -348,6 +348,36 @@ nn_gas_perf <- ts_gas_equiv %>%
   accuracy(nn.gas.forecast$mean)
 ```
 
+## use TBATS model 
+```{r}
+# TBATS for electricity
+tbats.e.forecast <- ts_electricity %>% 
+  window(end = c(2022, 1)) %>% 
+  tbats() %>% 
+  forecast(h = 12)
+
+# TBATS for natural gas
+tbats.gas.forecast <- ts_gas_equiv %>% 
+  window(end = c(2022, 1)) %>% 
+  tbats() %>% 
+  forecast(h = 12)
+
+```
+
+### TBATS model performance
+```{r}
+
+# neural network model performance for electricity data
+tbats_e_perf <- ts_electricity %>% 
+  window(start = c(2022, 2)) %>% 
+  accuracy(tbats.e.forecast$mean)
+
+# neural network model performance for gas data
+tbats_gas_perf <- ts_gas_equiv %>% 
+  window(start = c(2022, 2)) %>% 
+  accuracy(tbats.gas.forecast$mean)
+```
+
 
 ## compare performance scores and generate tables for use
 ```{r}
@@ -359,6 +389,7 @@ ts_electricity %>%
   autolayer(arima.e.forecast$mean, series = "SARIMA") +
   autolayer(arima.e.four.forecast$mean, series = "ARIMA with Fourier Terms") +
   autolayer(stl.e.forecast$mean, series = "STL + EST") +
+  autolayer(tbats.e.forecast$mean, series = "TBATS") +
   ylab("Price (cents/kWh)") +
   ggtitle("Comparision of Four Modeling Methods - Electricity") +
   theme_classic()
@@ -371,6 +402,7 @@ ts_gas_equiv %>%
   autolayer(arima.gas.forecast$mean, series = "SARIMA") +
   autolayer(arima.gas.four.forecast$mean, series = "ARIMA with Fourier Terms") +
   autolayer(stl.gas.forecast$mean, series = "STL + EST") +
+  autolayer(tbats.gas.forecast$mean, series = "TBATS") +
   ylab("Price (cents/kWh)") +
   ggtitle("Comparision of Four Modeling Methods - Natural Gas") +
   theme_classic()
@@ -379,14 +411,17 @@ ts_gas_equiv %>%
 scores.e <- rbind(sarima_e_perf, 
                   arima_four_e_perf,
                   stl_e_perf,
-                  nn_e_perf) %>% 
+                  nn_e_perf,
+                  tbats_e_perf
+                  ) %>% 
   as.data.frame()
 
   # rename rows
 row.names(scores.e) <- c("SARIMA", 
                          "ARIMA with Fourier", 
                          "STL",
-                         "Neural Network")
+                         "Neural Network",
+                         "TBATS")
 
   # find the row index of the lowest RMSE
 best.e.model <- scores.e$RMSE %>% 
@@ -409,14 +444,16 @@ kbl(scores.e,
 scores.gas <- rbind(sarima_gas_perf, 
                   arima_four_gas_perf,
                   stl_gas_perf,
-                  nn_gas_perf) %>% 
+                  nn_gas_perf,
+                  tbats_gas_perf) %>% 
   as.data.frame()
 
   # rename rows
 row.names(scores.gas) <- c("SARIMA", 
                          "ARIMA with Fourier", 
                          "STL",
-                         "Neural Network")
+                         "Neural Network",
+                         "TBATS")
 
   # find the row index of the lowest RMSE
 best.gas.model <- scores.gas$RMSE %>% 
