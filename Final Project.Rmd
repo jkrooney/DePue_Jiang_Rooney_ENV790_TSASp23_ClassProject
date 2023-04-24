@@ -393,11 +393,9 @@ nn.e.forecast <- ts_electricity[, 2] %>%
            h = 12)
 
 # neural network forecast for gas data
-<<<<<<< HEAD
 nn.gas.forecast <- ts_gas_equiv[, 2] %>% 
-=======
-`nn.gas.forecast <- ts_gas_equiv %>% 
->>>>>>> 4d47984c2f2ca8337d97a9ec188520c9047e215f
+
+nn.gas.forecast <- ts_gas_equiv %>% 
   window(end = c(2022 ,1)) %>% 
   nnetar(p = 2, P = 1,
          xreg = fourier(window(ts_gas_equiv[, 2], 
