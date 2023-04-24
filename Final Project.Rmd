@@ -65,6 +65,48 @@ plot(ts_NG, col="blue", ylab="$/Mcf", xlab="Date", main="NC Residential Natural 
 
 
 ```
+## standardize the unit of natural gas data to make it comparable with electricity
+```{r, warning=FALSE}
+# convert natural gas data from $/Mcf to $/kWh based on 80% heating efficiency
+# $/kWh = [($/mcf/1.037)/293.07107]/0.9 = $/mcf/273.52
+
+
+conversion <- 0.8*293.07107*1.037/100
+
+
+natural_gas.df$kwh_equiv<-(natural_gas.df$price/conversion)
+
+
+natural_gas.df<-na.omit(natural_gas.df)
+
+ts_gas_equiv<-ts(natural_gas.df[,c(3,4)], start=c(1989,1), frequency=12)
+
+ts_gas_equiv<-window(ts_gas_equiv, start=c(2001, 1))
+
+autoplot(ts_gas_equiv[,2]) +
+  ylab("Price (cents/kWh") + 
+  ggtitle("Natural Gas Price (cents/kWh)")
+
+
+ts.plot(ts_gas_equiv[,2], ts_electricity[,2], gpars = list(col = c("red", "blue")), 
+        xlab="Date", ylab="cents/kWh", 
+        main="Comparison of Natural Gas and Electricity Costs")
+legend("topleft", bty="n", lty=c(1,1), col=c("red","blue"),
+       legend=c(" Natural Gas ", " Electricity "))
+
+#Create Dataframe with both Gas & Electricity prices...
+#create new date column
+new_date<-seq(as.Date("2001/1/1"), by = "month", length.out = nrow(ts_electricity))
+
+#bind date, gas, & electricity
+nc_energy.df<-cbind.data.frame("Month_Date"=new_date, 
+                               "electricity"=nc_electricity.df$price_per_kWh, 
+                               "gas_equiv"=ts_gas_equiv[,2])
+
+#Subtract Gas price from Electricity price
+nc_energy.df$cost_diff<-(nc_energy.df$electricity - nc_energy.df$gas_equiv)
+
+```
 
 ## add covariates
 ```{r}
@@ -145,48 +187,7 @@ covariates_full_gas <- cbind(ts_gas_equiv[, 1], ts_temperature, fourier_full_gas
 ```
 
 
-## standardize the unit of natural gas data to make it comparable with electricity
-```{r, warning=FALSE}
-# convert natural gas data from $/Mcf to $/kWh based on 80% heating efficiency
-# $/kWh = [($/mcf/1.037)/293.07107]/0.9 = $/mcf/273.52
 
-
-conversion <- 0.8*293.07107*1.037/100
-
-
-natural_gas.df$kwh_equiv<-(natural_gas.df$price/conversion)
-
-
-natural_gas.df<-na.omit(natural_gas.df)
-
-ts_gas_equiv<-ts(natural_gas.df[,c(3,4)], start=c(1989,1), frequency=12)
-
-ts_gas_equiv<-window(ts_gas_equiv, start=c(2001, 1))
-
-autoplot(ts_gas_equiv[,2]) +
-  ylab("Price (cents/kWh") + 
-  ggtitle("Natural Gas Price (cents/kWh)")
-
-
-ts.plot(ts_gas_equiv[,2], ts_electricity[,2], gpars = list(col = c("red", "blue")), 
-        xlab="Date", ylab="cents/kWh", 
-        main="Comparison of Natural Gas and Electricity Costs")
-legend("topleft", bty="n", lty=c(1,1), col=c("red","blue"),
-       legend=c(" Natural Gas ", " Electricity "))
-
-#Create Dataframe with both Gas & Electricity prices...
-#create new date column
-new_date<-seq(as.Date("2001/1/1"), by = "month", length.out = nrow(ts_electricity))
-
-#bind date, gas, & electricity
-nc_energy.df<-cbind.data.frame("Month_Date"=new_date, 
-                               "electricity"=nc_electricity.df$price_per_kWh, 
-                               "gas_equiv"=ts_gas_equiv[,2])
-
-#Subtract Gas price from Electricity price
-nc_energy.df$cost_diff<-(nc_energy.df$electricity - nc_energy.df$gas_equiv)
-
-```
 
 # Decompose TS
 ```{r}
