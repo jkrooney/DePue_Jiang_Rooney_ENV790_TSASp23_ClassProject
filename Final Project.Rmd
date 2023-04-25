@@ -59,10 +59,8 @@ str(natural_gas.df)
 
 ts_NG<-ts(na.omit(natural_gas.df[,2]), start=c(1989,1), frequency=12)
 
-# plot raw timeseries
+# plot raw time series
 plot(ts_NG, col="blue", ylab="$/Mcf", xlab="Date", main="NC Residential Natural Gas Cost")
-
-
 
 ```
 ## standardize the unit of natural gas data to make it comparable with electricity
@@ -197,9 +195,6 @@ fourier_full_gas <- fourier(window(ts_gas_equiv[, 1],
 covariates_full_gas <- cbind(ts_gas_equiv[, 2], ts_temperature, fourier_full_gas)
   
 ```
-
-
-
 
 # Decompose TS
 ```{r}
@@ -340,7 +335,7 @@ arima_four_gas_perf <- ts_gas_equiv[, 1] %>%
 
 ## Use STL to model
 ```{r}
-# STL for eletricity
+# STL for electricity
 stl.e.forecast <- ts_electricity[, 2] %>% 
   window(end = c(2022, 1)) %>% 
   stlf(h = 12)
@@ -360,6 +355,7 @@ autoplot(ts_gas_equiv[, 1], series = "Historical Data") +
   ggtitle("Natural Gas - STL + EST") +
   ylab("Price (cents/kWh)")
 ```
+
 ### Examine STL's performance on electricity and NG data
 ```{r}
 
@@ -392,17 +388,17 @@ colnames(cov_test_nofour) <- c("UKRWAR", "temperature")
 # neural network forecast for electricity data
 nn.e.forecast <- ts_electricity[, 2] %>% 
   window(end = c(2022 ,1)) %>% 
-  nnetar(p = 2, P = 1,
+  nnetar(p = 2, P = 1, # 2 and 1 are randomly decided. To find the optimal one, 
+         # we need to run a couple of combinations to find the best one
          xreg = fourier(window(ts_electricity[, 2], 
                                end = c(2022, 1)
                                ),
                         K = 6)
          ) %>% 
   forecast(xreg = fourier(window(ts_electricity[, 2], 
-                                 end = c(2022, 1)
+                                 start = c(2022, 2)
                                  ),
-                          K = 6, # a single K should be smaller than period/2
-                          h = 12),
+                          K = 6),
            h = 12)
 
 # neural network forecast for gas data
