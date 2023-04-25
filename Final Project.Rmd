@@ -278,8 +278,6 @@ sarima_gas_perf <- ts_gas_equiv[, 1] %>%
 
 ```
 
-
-
 ## Use Arima with Fourier terms to model
 ```{r}
 # arima with fourier terms for eletricity
@@ -371,7 +369,7 @@ stl_gas_perf <- ts_gas_equiv[, 1] %>%
 
 ```
 
-## Use ETS to model -- not finished
+## Use ETS to model -- not finished -- I don't know how to do this
 ```{r}
 # I think STL doesn't need fourier terms. So, I will get covariates dataframes without fourier terms
 # because UKRWAR and temperature are the same across two data frames, we only need one
@@ -441,6 +439,103 @@ nn_gas_perf <- ts_gas_equiv[, 1] %>%
   window(start = c(2022, 2)) %>% 
   accuracy(nn.gas.forecast$mean)
 ```
+
+## find the optimal p and P values for neural network without fourier
+```{r}
+## p = 1, P = 0
+nn.e.forecast.10 <- ts_electricity[, 2] %>% 
+  window(end = c(2022 ,1)) %>% 
+  nnetar(p = 1, P = 0, # 2 and 1 are randomly decided. To find the optimal one, 
+         # we need to run a couple of combinations to find the best one
+         ) %>% 
+  forecast(h = 12)
+
+nn.e.10.score <- ts_electricity[, 2] %>% 
+  window(start = c(2022, 2)) %>% 
+  accuracy(nn.e.forecast.10$mean)
+
+## p = 1, P = 1
+nn.e.forecast.11 <- ts_electricity[, 2] %>% 
+  window(end = c(2022 ,1)) %>% 
+  nnetar(p = 1, P = 1, # 2 and 1 are randomly decided. To find the optimal one, 
+         # we need to run a couple of combinations to find the best one
+         ) %>% 
+  forecast(h = 12)
+
+nn.e.11.score <- ts_electricity[, 2] %>% 
+  window(start = c(2022, 2)) %>% 
+  accuracy(nn.e.forecast.11$mean)
+
+## p = 2, P = 0
+nn.e.forecast.20 <- ts_electricity[, 2] %>% 
+  window(end = c(2022 ,1)) %>% 
+  nnetar(p = 2, P = 0, # 2 and 1 are randomly decided. To find the optimal one, 
+         # we need to run a couple of combinations to find the best one
+         ) %>% 
+  forecast(h = 12)
+
+nn.e.20.score <- ts_electricity[, 2] %>% 
+  window(start = c(2022, 2)) %>% 
+  accuracy(nn.e.forecast.20$mean)
+
+## p = 2, P = 1
+nn.e.forecast.21 <- ts_electricity[, 2] %>% 
+  window(end = c(2022 ,1)) %>% 
+  nnetar(p = 2, P = 1, # 2 and 1 are randomly decided. To find the optimal one, 
+         # we need to run a couple of combinations to find the best one
+         ) %>% 
+  forecast(h = 12)
+
+nn.e.21.score <- ts_electricity[, 2] %>% 
+  window(start = c(2022, 2)) %>% 
+  accuracy(nn.e.forecast.21$mean)
+
+## p = 2, P = 2
+nn.e.forecast.22 <- ts_electricity[, 2] %>% 
+  window(end = c(2022 ,1)) %>% 
+  nnetar(p = 2, P = 2, # 2 and 1 are randomly decided. To find the optimal one, 
+         # we need to run a couple of combinations to find the best one
+         ) %>% 
+  forecast(h = 12)
+
+nn.e.22.score <- ts_electricity[, 2] %>% 
+  window(start = c(2022, 2)) %>% 
+  accuracy(nn.e.forecast.22$mean)
+
+## p = 1, P = 2
+nn.e.forecast.12 <- ts_electricity[, 2] %>% 
+  window(end = c(2022 ,1)) %>% 
+  nnetar(p = 1, P = 2, # 2 and 1 are randomly decided. To find the optimal one, 
+         # we need to run a couple of combinations to find the best one
+         ) %>% 
+  forecast(h = 12)
+
+nn.e.12.score <- ts_electricity[, 2] %>% 
+  window(start = c(2022, 2)) %>% 
+  accuracy(nn.e.forecast.12$mean)
+
+## p = 3, P = 1
+nn.e.forecast.31 <- ts_electricity[, 2] %>% 
+  window(end = c(2022 ,1)) %>% 
+  nnetar(p = 3, P = 1, # 2 and 1 are randomly decided. To find the optimal one, 
+         # we need to run a couple of combinations to find the best one
+         ) %>% 
+  forecast(h = 12)
+
+nn.e.31.score <- ts_electricity[, 2] %>% 
+  window(start = c(2022, 2)) %>% 
+  accuracy(nn.e.forecast.31$mean)
+
+nn.scores <- rbind(nn.e.10.score, nn.e.11.score, nn.e.20.score, nn.e.21.score,
+                   nn.e.22.score, nn.e.12.score, nn.e.31.score)
+
+row.names(nn.scores) <- c("10", "11", "20", "21", "22", "12", "31")
+
+nn.scores ## 11 has the lowest RMSE and 12 has the lowest MAPE
+
+# we can do the same thing to natural gas. Do we want to??
+```
+
 
 ## Use Neural Network, temperature, UKRWAR, and fourier to model
 ```{r}
