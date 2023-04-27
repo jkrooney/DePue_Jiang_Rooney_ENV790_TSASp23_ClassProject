@@ -108,14 +108,14 @@ ts_gas_equiv<-window(ts_gas_equiv, start=c(2001, 1))
 #plot gas TS in kw/hr equiv
 autoplot(ts_gas_equiv) +
   ylab("Price (cents/kWh") + 
-  ggtitle("Natural Gas Price (cents/kWh)")
+  ggtitle("NC Residential Natural Gas Cost (cents/kWh)")
 
 
 # coerce electricity to a time series object
 
 ts_electricity<-ts(rev(nc_electricity.df[,2]), start=c(2001,1), frequency=12)
 
-plot(ts_electricity, col="red", ylab="$/kWh", xlab="Date", main="NC Residential Electricity Cost")
+plot(ts_electricity, col="red", ylab="Price (cents/kWh)", xlab="Date", main="NC Residential Electricity Cost")
 
 
 #Create Dataframe with both Gas & Electricity prices...
@@ -128,7 +128,7 @@ nc_energy.df<-cbind.data.frame("Month_Date"=new_date,
                                "gas_equiv"=ts_gas_equiv)
 
 #Subtract Gas price from Electricity price
-nc_energy.df$cost_diff<-(nc_energy.df$electricity - nc_energy.df$gas_equiv)
+nc_energy.df$cost_diff <- nc_energy.df$electricity - nc_energy.df$gas_equiv
 
 ```
 
@@ -180,7 +180,6 @@ plot(decomp_elec)
 #remove seasonality
 ts_elec_ns<-(ts_electricity[,2] - decomp_elec$seasonal)
 ts_gas_ns<-(ts_gas_equiv[,1] - decomp_gas$seasonal)
-
 
 ```
 
@@ -269,29 +268,7 @@ autoplot(arima.gas.four.forecast$mean, series = "ARIMA with Fourier Terms") +
 
 ```
 
-##Summary and Conclusions
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-### Examine Arima with fourier's performance on electricity and NG data
-
-```{r}
+```{r Examine Arima with fourier's performance on electricity and NG data}
 
 # model performance for electricity data
 arima_four_e_perf <- ts_electricity[, 2] %>% 
@@ -305,9 +282,9 @@ arima_four_gas_perf <- ts_gas_equiv[, 1] %>%
 
 ```
 
-## Use STL to model
+Then we tried STL model
+```{r Use STL to model}
 
-```{r}
 # STL for electricity
 stl.e.forecast <- ts_electricity[, 2] %>% 
   window(end = c(2022, 1)) %>% 
@@ -329,9 +306,8 @@ autoplot(ts_gas_equiv[, 1], series = "Historical Data") +
   ylab("Price (cents/kWh)")
 ```
 
-### Examine STL's performance on electricity and NG data
 
-```{r}
+```{r Examine STL's performance on electricity and NG data}
 
 # model performance for electricity data
 stl_e_perf <- ts_electricity[, 2] %>% 
@@ -345,83 +321,10 @@ stl_gas_perf <- ts_gas_equiv[, 1] %>%
 
 ```
 
-## Use ETS to model -- not finished -- I don't know how to do this
-
-```{r}
-# I think STL doesn't need fourier terms. So, I will get covariates dataframes without fourier terms
-# because UKRWAR and temperature are the same across two data frames, we only need one
-cov_train_nofour <- covariates_train_e[, 1:2]
-colnames(cov_train_nofour) <- c("UKRWAR", "temperature")
-
-cov_test_nofour <- covariates_full_e[, 1:2] %>% 
-  window(start = c(2022, 2))
-colnames(cov_test_nofour) <- c("UKRWAR", "temperature")
-```
-
-## Use Neural Network and fourier to model
-
-```{r}
-# neural network forecast for electricity data
-nn.e.forecast <- ts_electricity[, 2] %>% 
-  window(end = c(2022 ,1)) %>% 
-  nnetar(p = 2, P = 1, # 2 and 1 are randomly decided. To find the optimal one, 
-         # we need to run a couple of combinations to find the best one
-         xreg = fourier(window(ts_electricity[, 2], 
-                               end = c(2022, 1)
-                               ),
-                        K = 6)
-         ) %>% 
-  forecast(xreg = fourier(window(ts_electricity[, 2], 
-                                 start = c(2022, 2)
-                                 ),
-                          K = 6),
-           h = 12)
-
-# neural network forecast for gas data
-nn.gas.forecast <- ts_gas_equiv[, 1] %>% 
-  window(end = c(2022 ,1)) %>% 
-  nnetar(p = 2, P = 1,
-         xreg = fourier(window(ts_gas_equiv[, 1], 
-                               end = c(2022, 1)
-                               ),
-                        K = 6)
-         ) %>% 
-  forecast(xreg = fourier(window(ts_gas_equiv[, 1], 
-                                 start = c(2022, 2)
-                                 ),
-                          K = 6),
-           h = 12)
+Then we tried to use neural network model. We used nnetar() in forecast package. We figured out p and P arguments in nnetar() have significant impact on model performance. Therefore, we first tried to identify the optimal p and P conbination by trying different combinations.
 
 
-autoplot(nn.e.forecast$mean, series = "Neural Network") +
-  autolayer(ts_electricity[, 2], series = "Historical Data") +
-  ggtitle("Electricity - Neural Network") +
-  ylab("Price (cents/kWh)")
-
-autoplot(nn.gas.forecast$mean, series = "Neural Network") +
-  autolayer(ts_gas_equiv[, 1], series = "Historical Data") +
-  ggtitle("Natural Gas - Neural Network") +
-  ylab("Price (cents/kWh)")
-```
-
-### neutral network model performance
-
-```{r}
-
-# neural network model performance for electricity data
-nn_e_perf <- ts_electricity[, 2] %>% 
-  window(start = c(2022, 2)) %>% 
-  accuracy(nn.e.forecast$mean)
-
-# neural network model performance for gas data
-nn_gas_perf <- ts_gas_equiv[, 1] %>% 
-  window(start = c(2022, 2)) %>% 
-  accuracy(nn.gas.forecast$mean)
-```
-
-## find the optimal p and P values for neural network without fourier
-
-```{r}
+```{r find the optimal p and P values for neural network without fourier}
 ## p = 1, P = 0
 nn.e.forecast.10 <- ts_electricity[, 2] %>% 
   window(end = c(2022 ,1)) %>% 
@@ -516,7 +419,95 @@ nn.scores ## 11 has the lowest RMSE and 12 has the lowest MAPE
 # we can do the same thing to natural gas. Do we want to??
 ```
 
+We found that the combination 11 (p = 1 and P = 1) has the best modeling performance for electricity series. Then we use this combination to run the neural network model with fourier terms for elecricity series.
 
+```{r Use Neural Network and fourier to model}
+# neural network forecast for electricity data
+nn.e.forecast <- ts_electricity[, 2] %>% 
+  window(end = c(2022 ,1)) %>% 
+  nnetar(p = 1, P = 1, # 2 and 1 are randomly decided. To find the optimal one, 
+         # we need to run a couple of combinations to find the best one
+         xreg = fourier(window(ts_electricity[, 2], 
+                               end = c(2022, 1)
+                               ),
+                        K = 6)
+         ) %>% 
+  forecast(xreg = fourier(window(ts_electricity[, 2], 
+                                 start = c(2022, 2)
+                                 ),
+                          K = 6),
+           h = 12)
+
+# neural network forecast for gas data
+nn.gas.forecast <- ts_gas_equiv[, 1] %>% 
+  window(end = c(2022 ,1)) %>% 
+  nnetar(p = 2, P = 1,
+         xreg = fourier(window(ts_gas_equiv[, 1], 
+                               end = c(2022, 1)
+                               ),
+                        K = 6)
+         ) %>% 
+  forecast(xreg = fourier(window(ts_gas_equiv[, 1], 
+                                 start = c(2022, 2)
+                                 ),
+                          K = 6),
+           h = 12)
+
+
+autoplot(nn.e.forecast$mean, series = "Neural Network") +
+  autolayer(ts_electricity[, 2], series = "Historical Data") +
+  ggtitle("Electricity - Neural Network") +
+  ylab("Price (cents/kWh)")
+
+autoplot(nn.gas.forecast$mean, series = "Neural Network") +
+  autolayer(ts_gas_equiv[, 1], series = "Historical Data") +
+  ggtitle("Natural Gas - Neural Network") +
+  ylab("Price (cents/kWh)")
+```
+
+```{r neutral network model performance}
+
+# neural network model performance for electricity data
+nn_e_perf <- ts_electricity[, 2] %>% 
+  window(start = c(2022, 2)) %>% 
+  accuracy(nn.e.forecast$mean)
+
+# neural network model performance for gas data
+nn_gas_perf <- ts_gas_equiv[, 1] %>% 
+  window(start = c(2022, 2)) %>% 
+  accuracy(nn.gas.forecast$mean)
+```
+
+Then we tried TBATS models for electricity and natural gas series
+```{r TBATS model}
+# TBATS for electricity
+tbats.e.forecast <- ts_electricity[, 2] %>% 
+  window(end = c(2022, 1)) %>% 
+  tbats() %>% 
+  forecast(h = 12)
+
+# TBATS for natural gas
+tbats.gas.forecast <- ts_gas_equiv[, 1] %>% 
+  window(end = c(2022, 1)) %>% 
+  tbats() %>% 
+  forecast(h = 12)
+
+```
+
+```{r TBATS model performance}
+
+# neural network model performance for electricity data
+tbats_e_perf <- ts_electricity[, 2] %>% 
+  window(start = c(2022, 2)) %>% 
+  accuracy(tbats.e.forecast$mean)
+
+# neural network model performance for gas data
+tbats_gas_perf <- ts_gas_equiv[, 1] %>% 
+  window(start = c(2022, 2)) %>% 
+  accuracy(tbats.gas.forecast$mean)
+```
+
+Then we think Ukraine War should have a significant impact on natural gas price and probably eletricity gas too. Also, temperature should be a good regressor to include since utility bills normally fluctuate in the same direction with temperature. Therefore, we created two covariates: UKRWAR and temperature. $UKRWAR$ is an indiciator variable with values of 0 and 1. Months before March 2022 have a value of 0, while months after and including March 2022 have a value of 1. The reason why we set the cutoff month at March 2002 despite the war started from last February is because the impact of the war on monthly natural gas price in February 2022 should be limited since the war started in late February. The temperature series is the monthly average temperature of Raleigh area. This is largest geographic level of historical temperature data.
 ```{r add covariates, include=F}
 # create an indicator variable for Ukraine War for gas
 
@@ -598,14 +589,13 @@ covariates_full_gas <- cbind(ts_gas_equiv[, 2], ts_temperature, fourier_full_gas
   
 ```
 
+After creating all the covariates, we repeated our modeling but with covariates to improve the accuracy of the models. First we incorporated covairates to neural network model. 
 
-### Use Neural Network, temperature, UKRWAR, and fourier to model
-
-```{r}
+```{r Use Neural Network, temperature, UKRWAR, and fourier to model}
 # neural network forecast for electricity data
 nn.cov.e.forecast <- ts_electricity[, 2] %>% 
   window(end = c(2022 ,1)) %>% 
-  nnetar(p = 2, P = 1,
+  nnetar(p = 1, P = 1,
          xreg = covariates_train_e) %>% 
   forecast(xreg = window(covariates_full_e, start = c(2022, 2)),
            h = 12)
@@ -629,9 +619,8 @@ autoplot(nn.cov.gas.forecast$mean, series = "Neural Network") +
   ylab("Price (cents/kWh)")
 ```
 
-### neutral network model, temperature, fourier, UKRWAR performance
 
-```{r}
+```{r neutral network model, temperature, fourier, UKRWAR performance}
 
 # neural network model performance for electricity data
 nn_cov_e_perf <- ts_electricity[, 2] %>% 
@@ -644,35 +633,54 @@ nn_cov_gas_perf <- ts_gas_equiv[, 1] %>%
   accuracy(nn.cov.gas.forecast$mean)
 ```
 
+##Summary and Conclusions
 
 
-```{r TBATS model}
-# TBATS for electricity
-tbats.e.forecast <- ts_electricity[, 2] %>% 
-  window(end = c(2022, 1)) %>% 
-  tbats() %>% 
-  forecast(h = 12)
 
-# TBATS for natural gas
-tbats.gas.forecast <- ts_gas_equiv[, 1] %>% 
-  window(end = c(2022, 1)) %>% 
-  tbats() %>% 
-  forecast(h = 12)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Use ETS to model -- not finished -- I don't know how to do this
+
+```{r}
+# I think STL doesn't need fourier terms. So, I will get covariates dataframes without fourier terms
+# because UKRWAR and temperature are the same across two data frames, we only need one
+cov_train_nofour <- covariates_train_e[, 1:2]
+colnames(cov_train_nofour) <- c("UKRWAR", "temperature")
+
+cov_test_nofour <- covariates_full_e[, 1:2] %>% 
+  window(start = c(2022, 2))
+colnames(cov_test_nofour) <- c("UKRWAR", "temperature")
 ```
 
-```{r TBATS model performance}
 
-# neural network model performance for electricity data
-tbats_e_perf <- ts_electricity[, 2] %>% 
-  window(start = c(2022, 2)) %>% 
-  accuracy(tbats.e.forecast$mean)
 
-# neural network model performance for gas data
-tbats_gas_perf <- ts_gas_equiv[, 1] %>% 
-  window(start = c(2022, 2)) %>% 
-  accuracy(tbats.gas.forecast$mean)
-```
+
+
+
+
+
+
+
 
 ### compare performance scores and generate tables for use
 
