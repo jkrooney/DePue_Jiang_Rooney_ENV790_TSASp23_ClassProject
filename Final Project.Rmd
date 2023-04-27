@@ -3,6 +3,7 @@ title: "Visionary Final"
 author: "Justin DePue, John Rooney, and Tony Jiang"
 date: "`r Sys.Date()`"
 output: pdf_document
+toc: TRUE
 geometry: margin=2.54cm
 fig_height: 3
 fig_width: 4
@@ -11,10 +12,29 @@ fig_width: 4
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+- Knitting commands in code chunks:
+  -  `include = FALSE` - code is run, but neither code nor results appear in knitted file
+  -  `echo = FALSE` - code not included in knitted file, but results are
+  -  `eval = FALSE` - code is not run in the knitted file
+  -  `message = FALSE` - messages do not appear in knitted file
+  -  `warning = FALSE` - warnings do not appear...
+  -  `fig.cap = "..."` - adds a caption to graphical results
 
-## library packages
+##Introduction
+This study was born out of both curiosity and necessity. One of our teammates faced higher than expected energy bills this winter and was suddenly faced with the question of whether to shiver to save money or spend it on heating bills and be forced to eat Spaghetti-O's as sustenance. While spring has sprung and summer is on the horizon, we know that winter is coming and that we should prepare now in order that history not repeat itself. 
 
-```{r warning=FALSE, message=FALSE}
+As students recently armed with the tools to conduct time series analysis and forecasting, we realized we could complete our final project while aiding our teammate with knowledge for the future. Our study question thus emerged: would it be more cost-effective to heat an apartment using electricity or a natural-gas powered heater? 
+
+Full of optimism that we could complete a class requirement while doing some good for the world (for as Marvel taught us, when you help someone, you help everyone), we set out to find the data that would lead us to the answer we sought. Our journey led us to that great repository of energy knowledge, the US Energy Information Administration. There we found two datasets we felt confident would help us help our teammate: "North Carolina Price of Natural Gas Delivered to Residential Customers (Dollars Per Thousand Cubic Feet)", which contained monthly data from January 1989 through January 2023, and "Average Retail Price of Electricity by State and Sector" which contained monthly data from January 2001 through January 2023. 
+
+##Data
+
+##Analysis
+
+##Summary and Conclusions
+
+
+```{r loading libraries, warning=FALSE, message=FALSE, include=F}
 
 library(tseries)
 library(lubridate)
@@ -28,9 +48,9 @@ library(readxl)
 
 ```
 
-## load the data
 
-```{r warning=FALSE}
+
+```{r load and explore data, warning=FALSE}
 
 # automatically set the working directory as personal local path to R project
 # so the file path in read.csv can work for everyone
@@ -58,16 +78,18 @@ natural_gas.df <- read.csv("./Data/NC_NaturalGas.csv", header = TRUE, skip=2,col
 summary(na.omit(natural_gas.df))
 str(natural_gas.df)
 
+```
+
+```{r create time series for natural gas}
 #create timeseries for natural gas
 
 ts_NG<-ts(na.omit(natural_gas.df[,2]), start=c(1989,1), frequency=12)
 
 # plot raw time series
 plot(ts_NG, col="blue", ylab="$/Mcf", xlab="Date", main="NC Residential Natural Gas Cost")
-
 ```
 
-## standardize the unit of natural gas data to make it comparable with electricity
+### standardize the unit of natural gas data to make it comparable with electricity
 
 ```{r, warning=FALSE}
 # convert natural gas data from $/Mcf to $/kWh based on 80% heating efficiency
@@ -119,7 +141,7 @@ nc_energy.df$cost_diff<-(nc_energy.df$electricity - nc_energy.df$gas_equiv)
 
 ```
 
-## add covariates
+### add covariates
 
 ```{r}
 # create an indicator variable for Ukraine War for gas
@@ -202,9 +224,9 @@ covariates_full_gas <- cbind(ts_gas_equiv[, 2], ts_temperature, fourier_full_gas
   
 ```
 
-# Decompose TS
 
-```{r}
+
+```{r decompose ts}
 #Decompose TS
 
 decomp_elec<-decompose(ts_electricity[,2], type="additive")
@@ -224,7 +246,7 @@ ts_gas_ns<-(ts_gas_equiv[,1] - decomp_gas$seasonal)
 
 ```
 
-## plot ACF and PACF to see the general pattern of two series
+### plot ACF and PACF to see the general pattern of two series
 
 ```{r}
 
@@ -247,9 +269,9 @@ Pacf(ts_gas_equiv[,1], lag.max=40, main="PACF Natural Gas")
 Pacf(ts_gas_ns, lag.max=40, main="PACF Non-Seasonal Gas")
 ```
 
-## Use seasonal Arima to model eletricity and natural gas
 
-```{r}
+
+```{r Seasonal Arima}
 #forecast Electricity SARIMA
 
 arima.e.model<-auto.arima(window(ts_electricity[, 2], end=c(2022,1)))
@@ -274,7 +296,7 @@ autoplot(ts_gas_equiv[, 1])+
 
 ### Examine seasonal Arima model's performance on electricity and NG data
 
-```{r}
+```{r examine SARIMA performance}
 
 # model performance for electricity data
 sarima_e_perf <- ts_electricity[, 2] %>% 
@@ -289,9 +311,7 @@ sarima_gas_perf <- ts_gas_equiv[, 1] %>%
 
 ```
 
-## Use Arima with Fourier terms to model
-
-```{r}
+```{r Arima with Fourier terms}
 # arima with fourier terms for eletricity
 arima.e.four.forecast <- ts_electricity[, 2] %>% 
   window(end = c(2022, 1)) %>% 
@@ -556,7 +576,7 @@ nn.scores ## 11 has the lowest RMSE and 12 has the lowest MAPE
 # we can do the same thing to natural gas. Do we want to??
 ```
 
-## Use Neural Network, temperature, UKRWAR, and fourier to model
+### Use Neural Network, temperature, UKRWAR, and fourier to model
 
 ```{r}
 # neural network forecast for electricity data
@@ -601,9 +621,9 @@ nn_cov_gas_perf <- ts_gas_equiv[, 1] %>%
   accuracy(nn.cov.gas.forecast$mean)
 ```
 
-## use TBATS model
 
-```{r}
+
+```{r TBATS model}
 # TBATS for electricity
 tbats.e.forecast <- ts_electricity[, 2] %>% 
   window(end = c(2022, 1)) %>% 
@@ -618,9 +638,7 @@ tbats.gas.forecast <- ts_gas_equiv[, 1] %>%
 
 ```
 
-### TBATS model performance
-
-```{r}
+```{r TBATS model performance}
 
 # neural network model performance for electricity data
 tbats_e_perf <- ts_electricity[, 2] %>% 
@@ -633,7 +651,7 @@ tbats_gas_perf <- ts_gas_equiv[, 1] %>%
   accuracy(tbats.gas.forecast$mean)
 ```
 
-## compare performance scores and generate tables for use
+### compare performance scores and generate tables for use
 
 ```{r}
 # plot these together
@@ -734,7 +752,7 @@ kbl(scores.gas,
                 stripe_color = "red")
 ```
 
-## Use STL to model electricity and natural gas for the next 12 month
+### Use STL to model electricity and natural gas for the next 12 month
 
 ```{r}
 
