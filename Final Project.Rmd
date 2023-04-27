@@ -3,6 +3,9 @@ title: "Visionary Final"
 author: "Justin DePue, John Rooney, and Tony Jiang"
 date: "`r Sys.Date()`"
 output: pdf_document
+geometry: margin=2.54cm
+fig_height: 3
+fig_width: 4
 ---
 
 ```{r setup, include=FALSE}
@@ -63,7 +66,9 @@ ts_NG<-ts(na.omit(natural_gas.df[,2]), start=c(1989,1), frequency=12)
 plot(ts_NG, col="blue", ylab="$/Mcf", xlab="Date", main="NC Residential Natural Gas Cost")
 
 ```
+
 ## standardize the unit of natural gas data to make it comparable with electricity
+
 ```{r, warning=FALSE}
 # convert natural gas data from $/Mcf to $/kWh based on 80% heating efficiency
 # $/kWh = [($/mcf/1.037)/293.07107]/0.9 = $/mcf/273.52
@@ -115,6 +120,7 @@ nc_energy.df$cost_diff<-(nc_energy.df$electricity - nc_energy.df$gas_equiv)
 ```
 
 ## add covariates
+
 ```{r}
 # create an indicator variable for Ukraine War for gas
 
@@ -197,6 +203,7 @@ covariates_full_gas <- cbind(ts_gas_equiv[, 2], ts_temperature, fourier_full_gas
 ```
 
 # Decompose TS
+
 ```{r}
 #Decompose TS
 
@@ -218,6 +225,7 @@ ts_gas_ns<-(ts_gas_equiv[,1] - decomp_gas$seasonal)
 ```
 
 ## plot ACF and PACF to see the general pattern of two series
+
 ```{r}
 
 # ACF and PACF of electricity data
@@ -240,6 +248,7 @@ Pacf(ts_gas_ns, lag.max=40, main="PACF Non-Seasonal Gas")
 ```
 
 ## Use seasonal Arima to model eletricity and natural gas
+
 ```{r}
 #forecast Electricity SARIMA
 
@@ -262,7 +271,9 @@ autoplot(ts_gas_equiv[, 1])+
   ggtitle("Natural Gas - SARIMA")
   # performance is not that good
 ```
+
 ### Examine seasonal Arima model's performance on electricity and NG data
+
 ```{r}
 
 # model performance for electricity data
@@ -279,6 +290,7 @@ sarima_gas_perf <- ts_gas_equiv[, 1] %>%
 ```
 
 ## Use Arima with Fourier terms to model
+
 ```{r}
 # arima with fourier terms for eletricity
 arima.e.four.forecast <- ts_electricity[, 2] %>% 
@@ -316,7 +328,9 @@ autoplot(arima.gas.four.forecast$mean, series = "ARIMA with Fourier Terms") +
   ylab("Price (cents/kWh)")
 
 ```
+
 ### Examine Arima with fourier's performance on electricity and NG data
+
 ```{r}
 
 # model performance for electricity data
@@ -332,6 +346,7 @@ arima_four_gas_perf <- ts_gas_equiv[, 1] %>%
 ```
 
 ## Use STL to model
+
 ```{r}
 # STL for electricity
 stl.e.forecast <- ts_electricity[, 2] %>% 
@@ -355,6 +370,7 @@ autoplot(ts_gas_equiv[, 1], series = "Historical Data") +
 ```
 
 ### Examine STL's performance on electricity and NG data
+
 ```{r}
 
 # model performance for electricity data
@@ -370,6 +386,7 @@ stl_gas_perf <- ts_gas_equiv[, 1] %>%
 ```
 
 ## Use ETS to model -- not finished -- I don't know how to do this
+
 ```{r}
 # I think STL doesn't need fourier terms. So, I will get covariates dataframes without fourier terms
 # because UKRWAR and temperature are the same across two data frames, we only need one
@@ -382,6 +399,7 @@ colnames(cov_test_nofour) <- c("UKRWAR", "temperature")
 ```
 
 ## Use Neural Network and fourier to model
+
 ```{r}
 # neural network forecast for electricity data
 nn.e.forecast <- ts_electricity[, 2] %>% 
@@ -427,6 +445,7 @@ autoplot(nn.gas.forecast$mean, series = "Neural Network") +
 ```
 
 ### neutral network model performance
+
 ```{r}
 
 # neural network model performance for electricity data
@@ -441,6 +460,7 @@ nn_gas_perf <- ts_gas_equiv[, 1] %>%
 ```
 
 ## find the optimal p and P values for neural network without fourier
+
 ```{r}
 ## p = 1, P = 0
 nn.e.forecast.10 <- ts_electricity[, 2] %>% 
@@ -536,8 +556,8 @@ nn.scores ## 11 has the lowest RMSE and 12 has the lowest MAPE
 # we can do the same thing to natural gas. Do we want to??
 ```
 
-
 ## Use Neural Network, temperature, UKRWAR, and fourier to model
+
 ```{r}
 # neural network forecast for electricity data
 nn.cov.e.forecast <- ts_electricity[, 2] %>% 
@@ -567,6 +587,7 @@ autoplot(nn.cov.gas.forecast$mean, series = "Neural Network") +
 ```
 
 ### neutral network model, temperature, fourier, UKRWAR performance
+
 ```{r}
 
 # neural network model performance for electricity data
@@ -580,7 +601,8 @@ nn_cov_gas_perf <- ts_gas_equiv[, 1] %>%
   accuracy(nn.cov.gas.forecast$mean)
 ```
 
-## use TBATS model 
+## use TBATS model
+
 ```{r}
 # TBATS for electricity
 tbats.e.forecast <- ts_electricity[, 2] %>% 
@@ -597,6 +619,7 @@ tbats.gas.forecast <- ts_gas_equiv[, 1] %>%
 ```
 
 ### TBATS model performance
+
 ```{r}
 
 # neural network model performance for electricity data
@@ -610,8 +633,8 @@ tbats_gas_perf <- ts_gas_equiv[, 1] %>%
   accuracy(tbats.gas.forecast$mean)
 ```
 
-
 ## compare performance scores and generate tables for use
+
 ```{r}
 # plot these together
 ts_electricity[, 2] %>% 
@@ -712,6 +735,7 @@ kbl(scores.gas,
 ```
 
 ## Use STL to model electricity and natural gas for the next 12 month
+
 ```{r}
 
 e.forecast.2324 <- ts_electricity[, 2] %>% 
@@ -735,4 +759,3 @@ e.forecast.2324$mean %>%
 
 
 ```
-
