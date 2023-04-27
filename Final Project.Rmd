@@ -30,6 +30,8 @@ Full of optimism that we could complete a class requirement while doing some goo
 ##Data
 
 ##Analysis
+Several models were developed and tested to determine what would best fit the data we had and what may lead to the best forecast to determine whether heating via electricity or natural gas would be most cost-efficient in the upcoming winter. The four that were used were the Seasonal ARIMA, ARIMA with Fourier terms, Neural Networks, and STL + EST.
+
 
 ##Summary and Conclusions
 
