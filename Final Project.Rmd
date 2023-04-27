@@ -9,9 +9,6 @@ fig_height: 3
 fig_width: 4
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 - Knitting commands in code chunks:
   -  `include = FALSE` - code is run, but neither code nor results appear in knitted file
   -  `echo = FALSE` - code not included in knitted file, but results are
@@ -20,23 +17,12 @@ knitr::opts_chunk$set(echo = TRUE)
   -  `warning = FALSE` - warnings do not appear...
   -  `fig.cap = "..."` - adds a caption to graphical results
 
-##Introduction
-This study was born out of both curiosity and necessity. One of our teammates faced higher than expected energy bills this winter and was suddenly faced with the question of whether to shiver to save money or spend it on heating bills and be forced to eat Spaghetti-O's as sustenance. While spring has sprung and summer is on the horizon, we know that winter is coming and that we should prepare now in order that history not repeat itself. 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
-As students recently armed with the tools to conduct time series analysis and forecasting, we realized we could complete our final project while aiding our teammate with knowledge for the future. Our study question thus emerged: would it be more cost-effective to heat an apartment using electricity or a natural-gas powered heater? 
-
-Full of optimism that we could complete a class requirement while doing some good for the world (for as Marvel taught us, when you help someone, you help everyone), we set out to find the data that would lead us to the answer we sought. Our journey led us to that great repository of energy knowledge, the US Energy Information Administration. There we found two datasets we felt confident would help us help our teammate: "North Carolina Price of Natural Gas Delivered to Residential Customers (Dollars Per Thousand Cubic Feet)", which contained monthly data from January 1989 through January 2023, and "Average Retail Price of Electricity by State and Sector" which contained monthly data from January 2001 through January 2023. 
-
-##Data
-
-##Analysis
-Several models were developed and tested to determine what would best fit the data we had and what may lead to the best forecast to determine whether heating via electricity or natural gas would be most cost-efficient in the upcoming winter. The four that were used were the Seasonal ARIMA, ARIMA with Fourier terms, Neural Networks, and STL + EST.
-
-
-##Summary and Conclusions
-
-
-```{r loading libraries, warning=FALSE, message=FALSE, include=F}
+```{r loading libraries, warning=FALSE, message=FALSE, 
+include=F}
 
 library(tseries)
 library(lubridate)
@@ -50,9 +36,15 @@ library(readxl)
 
 ```
 
+##Introduction
+This study was born out of both curiosity and necessity. One of our teammates faced higher than expected energy bills this winter and was suddenly faced with the question of whether to shiver to save money or spend it on heating bills and be forced to eat Spaghetti-O's as sustenance. While spring has sprung and summer is on the horizon, we know that winter is coming and that we should prepare now in order that history not repeat itself. 
 
+As students recently armed with the tools to conduct time series analysis and forecasting, we realized we could complete our final project while aiding our teammate with knowledge for the future. Our study question thus emerged: would it be more cost-effective to heat an apartment in North Carolina using electricity or a natural-gas powered heater? 
 
-```{r load and explore data, warning=FALSE}
+Full of optimism that we could complete a class requirement while doing some good for the world (for as Marvel taught us, when you help someone, you help everyone), we set out to find the data that would lead us to the answer we sought. Our journey led us to that great repository of energy knowledge, the US Energy Information Administration. There we found two datasets we felt confident would help us help our teammate: "North Carolina Price of Natural Gas Delivered to Residential Customers (Dollars Per Thousand Cubic Feet)", which contained monthly data from January 1989 through January 2023, and "Average Retail Price of Electricity by State and Sector" which contained monthly data from January 2001 through January 2023. 
+
+##Data
+```{r load and explore data, warning=FALSE, include=FALSE}
 
 # automatically set the working directory as personal local path to R project
 # so the file path in read.csv can work for everyone
@@ -82,18 +74,21 @@ str(natural_gas.df)
 
 ```
 
-```{r create time series for natural gas}
+##Analysis
+We first created initial time series objects and plotted them, along with ACF and PACF plots to gain an initial sense of what the series looked like and what seasonality they may have.  
+
+```{r create time series for natural gas, include=FALSE}
 #create timeseries for natural gas
 
 ts_NG<-ts(na.omit(natural_gas.df[,2]), start=c(1989,1), frequency=12)
+```
 
+```{r plot initial time series, includ=FALSE}
 # plot raw time series
 plot(ts_NG, col="blue", ylab="$/Mcf", xlab="Date", main="NC Residential Natural Gas Cost")
 ```
 
-### standardize the unit of natural gas data to make it comparable with electricity
-
-```{r, warning=FALSE}
+```{r, warning=FALSE, include=FALSE}
 # convert natural gas data from $/Mcf to $/kWh based on 80% heating efficiency
 # $/kWh = [($/mcf/1.037)/293.07107]/0.9 = $/mcf/273.52
 
@@ -122,12 +117,6 @@ ts_electricity<-ts(rev(nc_electricity.df[,2]), start=c(2001,1), frequency=12)
 
 plot(ts_electricity, col="red", ylab="$/kWh", xlab="Date", main="NC Residential Electricity Cost")
 
-#plot both electric & gas TS together
-ts.plot(ts_gas_equiv, ts_electricity, gpars = list(col = c("red", "blue")), 
-        xlab="Date", ylab="cents/kWh", 
-        main="Comparison of Natural Gas and Electricity Costs")
-legend("topleft", bty="n", lty=c(1,1), col=c("red","blue"),
-       legend=c(" Natural Gas ", " Electricity "))
 
 #Create Dataframe with both Gas & Electricity prices...
 #create new date column
@@ -143,114 +132,16 @@ nc_energy.df$cost_diff<-(nc_energy.df$electricity - nc_energy.df$gas_equiv)
 
 ```
 
-### add covariates
-
-```{r}
-# create an indicator variable for Ukraine War for gas
-
-# create a column with row index
-natural_gas.df <- rownames_to_column(natural_gas.df, var = "index")
-
-natural_gas.df$index = as.numeric(natural_gas.df$index)
-
-natural_gas.df$UKRWAR <- ifelse(natural_gas.df$index >= 399, 1, 0)
-
-natural_gas.df <- natural_gas.df[, c(-1, -6)]
-
-ts_gas_equiv<-ts(natural_gas.df[,c(3,4)], start=c(1989,1), frequency=12) %>% 
-  window(start = c(2001, 1))
-
-# create an indicator variable for Ukraine War for electricity
-nc_electricity.df <- rownames_to_column(nc_electricity.df, var = "index")
-
-nc_electricity.df$index <- as.numeric(nc_electricity.df$index)
-
-nc_electricity.df$UKRWAR <- ifelse(nc_electricity.df$index >= 255, 1, 0)
-
-nc_electricity.df <- nc_electricity.df[, -1]
-
-# coerce electricity to a time series object
-
-ts_electricity<-ts(rev(nc_electricity.df[,2:3]), start=c(2001,1), frequency=12)
-
-
-# import temperature data
-temperautre <- read_xlsx("./Data/Raleigh Temperature.xlsx") %>% 
-  gather(key = "Month", value = "temperature", Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec)
-
-temperautre <- temperautre[order(temperautre$Year), ] 
-
-ts_temperature <- temperautre[,3] %>% 
-  na.omit() %>% 
-  ts(start = c(1995, 1), frequency = 12) %>% 
-  window(start = c(2001, 1), end = c(2023, 1))
-
-# create a data frame for covariates for electricity (2001-2022)
-# we need to do this because electricity and natural gas 
-# have different fourier terms
-fourier_train_e <- fourier(window(ts_electricity[, 2],
-                                end = c(2022, 1)),
-                         K = 6)
-
-covariates_train_e <- ts_electricity[, 1] %>% 
-  window(end = c(2022, 1)) %>% 
-  cbind(window(ts_temperature, end = c(2022,1)),
-        fourier_train_e)
-
-
-# create covariates data frame for electricity (2001-2023)
-fourier_full_e <- fourier(window(ts_electricity[, 2],
-                                end = c(2023, 1)),
-                         K = 6)
-
-covariates_full_e <- cbind(ts_electricity[, 1], ts_temperature, fourier_full_e)
-
-# create covariates data frame for natural gas (2001-2022)
-fourier_train_gas <- fourier(window(ts_gas_equiv[, 1],
-                                end = c(2022, 1)),
-                         K = 6)
-
-covariates_train_gas <- ts_gas_equiv[, 2] %>% 
-  window(end = c(2022, 1)) %>% 
-  cbind(window(ts_temperature, end = c(2022,1)
-               ),
-        fourier_train_gas)
-
-
-# create covariates data frame for electricity (2001-2023)
-fourier_full_gas <- fourier(window(ts_gas_equiv[, 1],
-                                end = c(2023, 1)),
-                         K = 6)
-
-covariates_full_gas <- cbind(ts_gas_equiv[, 2], ts_temperature, fourier_full_gas)
-  
+```{r plot elec and gas ts, echo=FALSE}
+#plot both electric & gas TS together
+ts.plot(ts_gas_equiv, ts_electricity, gpars = list(col = c("red", "blue")), 
+        xlab="Date", ylab="cents/kWh", 
+        main="Comparison of Natural Gas and Electricity Costs")
+legend("topleft", bty="n", lty=c(1,1), col=c("red","blue"),
+       legend=c(" Natural Gas ", " Electricity "))
 ```
 
-
-
-```{r decompose ts}
-#Decompose TS
-
-decomp_elec<-decompose(ts_electricity[,2], type="additive")
-decomp_gas<-decompose(ts_gas_equiv[,1], type="multiplicative")
-
-ts_gas_equiv[,1] %>% 
-  window(start = c(2013,1), end = c(2023,1)) %>%
-  stl(s.window = "periodic") %>% 
-  plot()
-
-plot(decomp_elec)
-
-#remove seasonality
-ts_elec_ns<-(ts_electricity[,2] - decomp_elec$seasonal)
-ts_gas_ns<-(ts_gas_equiv[,1] - decomp_gas$seasonal)
-
-
-```
-
-### plot ACF and PACF to see the general pattern of two series
-
-```{r}
+```{r ACF and PACF of electricity and natural gas, echo=FALSE}
 
 # ACF and PACF of electricity data
 par(mfrow=c(1,2))
@@ -271,9 +162,36 @@ Pacf(ts_gas_equiv[,1], lag.max=40, main="PACF Natural Gas")
 Pacf(ts_gas_ns, lag.max=40, main="PACF Non-Seasonal Gas")
 ```
 
+We then decomposed the time series objects for further analysis. 
+
+```{r decompose ts, echo=FALSE}
+#Decompose TS
+
+decomp_elec<-decompose(ts_electricity[,2], type="additive")
+decomp_gas<-decompose(ts_gas_equiv[,1], type="multiplicative")
+
+ts_gas_equiv[,1] %>% 
+  window(start = c(2013,1), end = c(2023,1)) %>%
+  stl(s.window = "periodic") %>% 
+  plot()
+
+plot(decomp_elec)
+
+#remove seasonality
+ts_elec_ns<-(ts_electricity[,2] - decomp_elec$seasonal)
+ts_gas_ns<-(ts_gas_equiv[,1] - decomp_gas$seasonal)
 
 
-```{r Seasonal Arima}
+```
+
+
+Several models were developed and tested to determine what would best fit the data we had and what may lead to the best forecast to determine whether heating via electricity or natural gas would be most cost-efficient in the upcoming winter. The five that were used were the Seasonal ARIMA, ARIMA with Fourier terms, Neural Networks, TBATS, and STL + EST.
+
+Each of these tests used functions from the "forecast" library and required the use of time series data which we created using the "ts" function from the "tseries" library.
+
+While the Seasonal ARIMA was a logical first model to try, we quickly felt that the performance was not particularly strong. 
+
+```{r Seasonal Arima, echo=FALSE}
 #forecast Electricity SARIMA
 
 arima.e.model<-auto.arima(window(ts_electricity[, 2], end=c(2022,1)))
@@ -296,8 +214,6 @@ autoplot(ts_gas_equiv[, 1])+
   # performance is not that good
 ```
 
-### Examine seasonal Arima model's performance on electricity and NG data
-
 ```{r examine SARIMA performance}
 
 # model performance for electricity data
@@ -312,6 +228,8 @@ sarima_gas_perf <- ts_gas_equiv[, 1] %>%
   accuracy(arima.gas.forecast$mean)
 
 ```
+We decided to explore more advanced models that could handle the ARIMA with Fourier Terms model, Neural Networks, TBATS, and STL + EST.
+ARIMA with Fourier terms is known as a dynamic harmonic regression model with an ARMA error structure, using the "fourier" function from package "forecast" to find terms that model seasonal components. 
 
 ```{r Arima with Fourier terms}
 # arima with fourier terms for eletricity
@@ -350,6 +268,26 @@ autoplot(arima.gas.four.forecast$mean, series = "ARIMA with Fourier Terms") +
   ylab("Price (cents/kWh)")
 
 ```
+
+##Summary and Conclusions
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ### Examine Arima with fourier's performance on electricity and NG data
 
@@ -577,6 +515,89 @@ nn.scores ## 11 has the lowest RMSE and 12 has the lowest MAPE
 
 # we can do the same thing to natural gas. Do we want to??
 ```
+
+
+```{r add covariates, include=F}
+# create an indicator variable for Ukraine War for gas
+
+# create a column with row index
+natural_gas.df <- rownames_to_column(natural_gas.df, var = "index")
+
+natural_gas.df$index = as.numeric(natural_gas.df$index)
+
+natural_gas.df$UKRWAR <- ifelse(natural_gas.df$index >= 399, 1, 0)
+
+natural_gas.df <- natural_gas.df[, c(-1, -6)]
+
+ts_gas_equiv<-ts(natural_gas.df[,c(3,4)], start=c(1989,1), frequency=12) %>% 
+  window(start = c(2001, 1))
+
+# create an indicator variable for Ukraine War for electricity
+nc_electricity.df <- rownames_to_column(nc_electricity.df, var = "index")
+
+nc_electricity.df$index <- as.numeric(nc_electricity.df$index)
+
+nc_electricity.df$UKRWAR <- ifelse(nc_electricity.df$index >= 255, 1, 0)
+
+nc_electricity.df <- nc_electricity.df[, -1]
+
+# coerce electricity to a time series object
+
+ts_electricity<-ts(rev(nc_electricity.df[,2:3]), start=c(2001,1), frequency=12)
+
+
+# import temperature data
+temperautre <- read_xlsx("./Data/Raleigh Temperature.xlsx") %>% 
+  gather(key = "Month", value = "temperature", Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec)
+
+temperautre <- temperautre[order(temperautre$Year), ] 
+
+ts_temperature <- temperautre[,3] %>% 
+  na.omit() %>% 
+  ts(start = c(1995, 1), frequency = 12) %>% 
+  window(start = c(2001, 1), end = c(2023, 1))
+
+# create a data frame for covariates for electricity (2001-2022)
+# we need to do this because electricity and natural gas 
+# have different fourier terms
+fourier_train_e <- fourier(window(ts_electricity[, 2],
+                                end = c(2022, 1)),
+                         K = 6)
+
+covariates_train_e <- ts_electricity[, 1] %>% 
+  window(end = c(2022, 1)) %>% 
+  cbind(window(ts_temperature, end = c(2022,1)),
+        fourier_train_e)
+
+
+# create covariates data frame for electricity (2001-2023)
+fourier_full_e <- fourier(window(ts_electricity[, 2],
+                                end = c(2023, 1)),
+                         K = 6)
+
+covariates_full_e <- cbind(ts_electricity[, 1], ts_temperature, fourier_full_e)
+
+# create covariates data frame for natural gas (2001-2022)
+fourier_train_gas <- fourier(window(ts_gas_equiv[, 1],
+                                end = c(2022, 1)),
+                         K = 6)
+
+covariates_train_gas <- ts_gas_equiv[, 2] %>% 
+  window(end = c(2022, 1)) %>% 
+  cbind(window(ts_temperature, end = c(2022,1)
+               ),
+        fourier_train_gas)
+
+
+# create covariates data frame for electricity (2001-2023)
+fourier_full_gas <- fourier(window(ts_gas_equiv[, 1],
+                                end = c(2023, 1)),
+                         K = 6)
+
+covariates_full_gas <- cbind(ts_gas_equiv[, 2], ts_temperature, fourier_full_gas)
+  
+```
+
 
 ### Use Neural Network, temperature, UKRWAR, and fourier to model
 
