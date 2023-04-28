@@ -1,9 +1,13 @@
 ---
-title: "Visionary Final"
+title: 'Winter Is Coming: Forecasting Electricity and Natural Gas Prices for Home
+  Heating'
 author: "Justin DePue, John Rooney, and Tony Jiang"
 date: "`r Sys.Date()`"
-output: pdf_document
-toc: TRUE
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+toc: yes
 geometry: margin=2.54cm
 fig_height: 3
 fig_width: 4
@@ -35,14 +39,16 @@ library(readxl)
 ```
 
 
-##Introduction
+## Introduction
 This study was born out of both curiosity and necessity. One of our teammates faced higher than expected energy bills this winter and was suddenly faced with the question of whether to shiver to save money or spend it on heating bills and be forced to eat Spaghetti-O's as sustenance. While spring has sprung and summer is on the horizon, we know that winter is coming and that we should prepare now in order that history not repeat itself. 
 
 As students recently armed with the tools to conduct time series analysis and forecasting, we realized we could complete our final project while aiding our teammate with knowledge for the future. Our study question thus emerged: would it be more cost-effective to heat an apartment in North Carolina using electricity or a natural-gas powered heater? 
 
 Full of optimism that we could complete a class requirement while doing some good for the world (for as Marvel taught us, when you help someone, you help everyone), we set out to find the data that would lead us to the answer we sought. Our journey led us to that great repository of energy knowledge, the US Energy Information Administration. There we found two datasets we felt confident would help us help our teammate: "North Carolina Price of Natural Gas Delivered to Residential Customers (Dollars Per Thousand Cubic Feet)", which contained monthly data from January 1989 through January 2023, and "Average Retail Price of Electricity by State and Sector" which contained monthly data from January 2001 through January 2023. 
 
-##Data
+## Data
+
+Both datasets were downloaded from the EIA as .csv files. The most significant data wrangling was done with the natural gas data as it was originally provided in dollars per thousand cubic feet and needed to be in dollars per kilowatt hour for comparison with electricity data. The electricity data was provided monthly for both regions and states by sector. The natural gas data was provided monthly for North Carolina accompanied by price. 
 ```{r load and explore data, warning=FALSE, include=FALSE}
 
 # automatically set the working directory as personal local path to R project
@@ -167,8 +173,10 @@ p2
   
 ```
 
-##Analysis
-We first created initial time series objects and plotted them, along with ACF and PACF plots to gain an initial sense of what the series looked like and what seasonality they may have.  
+## Analysis
+Our analysis began by creating initial time series objects and plotting them, along with creating ACF and PACF plots to gain an initial sense of what the series looked like and what seasonality they may have. 
+
+We then decomposed the time series objects for further analysis to visualize the trend and seasonality of each series. The decomposition of the natural gas time series object shows clear seasonality in price along with a steep upward trend beginning in 2020. The decomposition of electricity prices shows a clear upward trend from the beginning of the series and shows a bimodal seasonality.
 
 ```{r create time series for natural gas, include=FALSE}
 #create timeseries for natural gas
@@ -176,7 +184,7 @@ We first created initial time series objects and plotted them, along with ACF an
 ts_NG<-ts(na.omit(natural_gas.df[,2]), start=c(1989,1), frequency=12)
 ```
 
-```{r plot initial time series, echo=FALSE}
+```{r plot initial time series, include=FALSE}
 # plot raw time series
 plot(ts_NG, col="blue", ylab="$/Mcf", xlab="Date", main="NC Residential Natural Gas Cost")
 ```
@@ -234,7 +242,8 @@ legend("topleft", bty="n", lty=c(1,1), col=c("red","blue"),
        legend=c(" Natural Gas ", " Electricity "))
 ```
 
-We then decomposed the time series objects for further analysis. 
+
+ 
 
 ```{r decompose ts, echo=FALSE}
 #Decompose TS
@@ -276,14 +285,11 @@ Pacf(ts_gas_equiv, lag.max=40, main="PACF Natural Gas")
 Pacf(ts_gas_ns, lag.max=40, main="PACF Non-Seasonal Gas")
 ```
 
-
-
-
 Several models were developed and tested to determine what would best fit the data we had and what may lead to the best forecast to determine whether heating via electricity or natural gas would be most cost-efficient in the upcoming winter. The five that were used were the Seasonal ARIMA, ARIMA with Fourier terms, Neural Networks, TBATS, and STL + EST.
 
 Each of these tests used functions from the "forecast" library and required the use of time series data which we created using the "ts" function from the "tseries" library.
 
-While the Seasonal ARIMA was a logical first model to try, we quickly felt that the performance was not particularly strong. 
+While the Seasonal ARIMA was a logical first model to try, we quickly felt that the performance was not particularly strong and that developing and testing other models was warranted. 
 
 ```{r Seasonal Arima, echo=FALSE}
 #forecast Electricity SARIMA
@@ -322,7 +328,7 @@ sarima_gas_perf <- ts_gas_equiv %>%
   accuracy(arima.gas.forecast$mean)
 
 ```
-We decided to explore more advanced models that could handle the ARIMA with Fourier Terms model, Neural Networks, TBATS, and STL + EST.
+We decided to explore more advanced models such as the ARIMA with Fourier Terms model, Neural Networks, TBATS, and STL + EST.
 ARIMA with Fourier terms is known as a dynamic harmonic regression model with an ARMA error structure, using the "fourier" function from package "forecast" to find terms that model seasonal components. 
 
 ```{r Arima with Fourier terms, echo=FALSE}
@@ -380,7 +386,7 @@ arima_four_gas_perf <- ts_gas_equiv %>%
 &nbsp;
 &nbsp;
 
-Then we tried STL model
+We next developed and tested an STL model.
 
 &nbsp;
 &nbsp;
@@ -424,7 +430,7 @@ stl_gas_perf <- ts_gas_equiv %>%
 &nbsp;
 &nbsp;
 
-Then we tried to use neural network model. We used nnetar() in forecast package. We figured out p and P arguments in nnetar() have significant impact on model performance. Therefore, we first tried to identify the optimal p and P conbination by trying different combinations.
+We then developed and test a neural network model using the "nnetar()" function in the "forecast" package. We learned that the p and P arguments in nnetar() have significant impact on model performance. Therefore, we worked to identify the optimal p and P combination through trial and error.
 
 &nbsp;
 &nbsp;
@@ -665,7 +671,7 @@ kbl(nn.gas.scores,
 &nbsp;
 &nbsp;
 
-We found that the combination 11 (p = 1 and P = 1) has the best modeling performance for electricity series, and the combination 32 (p = 3 and P = 2) has the best modeling performance for natural gas series. Then we use this combination to run the neural network model with fourier terms for elecricity series.
+We found that combination 11 (p = 1 and P = 1) had the best modeling performance for our electricity series, and combination 32 (p = 3 and P = 2) had the best modeling performance for our natural gas series. We then used combination 11 to run a neural network model with fourier terms for our electricity series.
 
 &nbsp;
 &nbsp;
@@ -735,7 +741,7 @@ nn_gas_perf <- ts_gas_equiv %>%
 &nbsp;
 &nbsp;
 
-Then we tried TBATS models for electricity and natural gas series
+We then developed and tested a TBATS models for our electricity and natural gas series.
 
 &nbsp;
 &nbsp;
@@ -789,7 +795,7 @@ tbats_gas_perf <- ts_gas_equiv%>%
 ```
 &nbsp;
 &nbsp;
-Then we think Ukraine War should have a significant impact on natural gas price and probably eletricity gas too. Also, temperature should be a good regressor to include since utility bills normally fluctuate in the same direction with temperature. Therefore, we created two covariates: UKRWAR and temperature. $UKRWAR$ is an indiciator variable with values of 0 and 1. Months before March 2022 have a value of 0, while months after and including March 2022 have a value of 1. The reason why we set the cutoff month at March 2002 despite the war started from last February is because the impact of the war on monthly natural gas price in February 2022 should be limited since the war started in late February. The temperature series is the monthly average temperature of Raleigh area. This is largest geographic level of historical temperature data.
+As we thought about other ways to model our time series, we realized that the Ukraine War has had a significant impact on natural gas prices, and likely eletricity price, too. We additionally realized temperature would be a good regressor to include since utility bills normally fluctuate in the same direction as temperature. Therefore, we created two covariates: UKRWAR and temperature. $UKRWAR$ is an indicator variable with values of 0 and 1. Months before March 2022 have a value of 0, while months after and including March 2022 have a value of 1. The reason why we set the cutoff month at March 2022 despite the war starting in February of that year is because the impact of the war on monthly natural gas prices in February 2022 should be limited because of the war beginning that month. The temperature series is the monthly average temperature of the Raleigh area. This is largest geographic level of historical temperature data.
 &nbsp;
 &nbsp;
 ```{r, echo=FALSE}
@@ -877,7 +883,7 @@ covariates_full_gas <- cbind(ts_gas_equiv_war[, 2], ts_temperature, fourier_full
 &nbsp;
 &nbsp;
 
-After creating all the covariates, we repeated our modeling but with covariates to improve the accuracy of the models. First we incorporated covariates to neural network model.
+After creating all the covariates, we repeated our modeling but with covariates to improve the accuracy of the models. First we incorporated covariates into our neural network model.
 
 &nbsp;
 &nbsp;
@@ -935,7 +941,7 @@ nn_cov_gas_perf <- ts_gas_equiv_war[, 1] %>%
 &nbsp;
 &nbsp;
 
-Then we use seasonal arima model with temperature and fourier terms to model two series. UKRWAR is excluded because R reports no suitable ARIMA model when UKRWAR is included. Function used: auto.arima(xreg)
+We then developed a seasonal arima model with temperature and fourier terms to model two series. UKRWAR as a covariate was excluded because R reported no suitable ARIMA model when UKRWAR was included. The function used for this was "auto.arima(xreg)".
 
 &nbsp;
 &nbsp;
@@ -992,10 +998,8 @@ sarima_cov_gas_perf <- ts_gas_equiv_war[, 1] %>%
 &nbsp;
 &nbsp;
 
-##Summary and Conclusions
-
-
-## Use ETS to model -- not finished -- I don't know how to do this, maybe we don't need to include this
+## Summary and Conclusions
+When comparing the accuracy of each of the models that were tested, the STL model emerged as the best fit for both the price of electricity and the price of natural gas when comparing both the RMSE and MAPE scores. Both models missed the heights seen in 2022, however. There could be several reasons for this. One is the difficulty of modeling for the beginning of the war in Ukraine and the impact that has had on natural gas prices both regionally and around the world. Another is the difficulty of modeling for the influence of generationally high inflation. With both of these compounding each other, it is perhaps not surprising that all of the models failed to predict the rise in price for both electricity and natural gas. 
 
 ```{r, echo=FALSE, warning=FALSE}
 # I think STL doesn't need fourier terms. So, I will get covariates dataframes without fourier terms
@@ -1012,9 +1016,8 @@ colnames(cov_test_nofour) <- c("UKRWAR", "temperature")
 &nbsp;
 &nbsp;
 
-### compare performance scores and generate tables for use
 
-```{r, echo=FALSE, warning=FALSE}
+```{r compare performace scores and generate tables for use, echo=FALSE, warning=FALSE}
 # plot these together
 ts_electricity %>% 
   window(start = c(2016, 1)) %>% 
@@ -1027,7 +1030,7 @@ ts_electricity %>%
   autolayer(nn.cov.e.forecast$mean, series = "Neural Network with Covariates") +
   autolayer(sarima.e.cov.forecast$mean, series = "SARIMA with Tem and Fourier") +
   ylab("Price (cents/kWh)") +
-  ggtitle("Comparision of Four Modeling Methods - Electricity") +
+  ggtitle("Comparision of Modeling Methods - Electricity") +
   theme_classic()
 
   
@@ -1042,7 +1045,7 @@ ts_gas_equiv %>%
   autolayer(nn.cov.gas.forecast$mean,series = "Neural Network with Covariates") +
   autolayer(sarima.gas.cov.forecast$mean, series = "SARIMA with Tem and Fourier") +
   ylab("Price (cents/kWh)") +
-  ggtitle("Comparision of Four Modeling Methods - Natural Gas") +
+  ggtitle("Comparision of Modeling Methods - Natural Gas") +
   theme_classic()
 
 # scores for electricity
@@ -1121,7 +1124,7 @@ kbl(scores.gas,
 &nbsp;
 &nbsp;
 
-### Use STL to model electricity and natural gas for the next 12 month
+Our initial research question posed how our roommate could best plan for surviving, if not thriving, in the upcoming winter. Based on our analysis, the answer appears to be that he would be best off by buying a natural gas-powered heater. Given the vicissitudes of energy prices seen in recent months, and the uncertainty of global and domestic events that could further impact energy prices, this is hard to say with certainty as is the case with all forecasts. Revisiting these forecasts both ahead of the upcoming winter and annually thereafter with updated data would be well-advised. 
 
 ```{r, echo=FALSE, warning=FALSE}
 
