@@ -21,18 +21,20 @@ fig_width: 4
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r loading libraries, warning=FALSE, message=FALSE, 
-include=F}
 
+```{r loading libraries, warning = FALSE, message = FALSE, include = FALSE}
 library(tseries)
 library(lubridate)
 library(here)
 library(tidyverse)
-library(outliers)
 library(ggplot2)
 library(forecast)
 library(kableExtra)
 library(readxl)
+
+```
+
+
 
 ```
 
@@ -636,29 +638,6 @@ nn_cov_gas_perf <- ts_gas_equiv[, 1] %>%
 ##Summary and Conclusions
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## Use ETS to model -- not finished -- I don't know how to do this
 
 ```{r}
@@ -670,10 +649,53 @@ colnames(cov_train_nofour) <- c("UKRWAR", "temperature")
 cov_test_nofour <- covariates_full_e[, 1:2] %>% 
   window(start = c(2022, 2))
 colnames(cov_test_nofour) <- c("UKRWAR", "temperature")
+
 ```
 
+## Use SARIMA with covariates to model
 
+```{r Arima with Fourier terms}
+# arima with fourier terms for eletricity
+sarima.e.cov.forecast <- ts_electricity[, 2] %>% 
+  window(end = c(2022, 1)) %>% 
+  auto.arima(seasonal = FALSE, 
+             xreg = covariates_train_e) %>% 
+  forecast(xreg = window(covariates_full_e, start = c(2022, 2)),
+           h = 12)
 
+autoplot(arima.e.cov.forecast$mean, series = "ARIMA with Covariates") +
+  autolayer(ts_electricity[, 2], series = "Historical Data") +
+  ggtitle("Electricity - ARIMA with Covariates") +
+  ylab("Price (cents/kWh)")
+
+# arima with fourier terms for gas
+arima.gas.cov.forecast <- ts_gas_equiv[, 1] %>% 
+  window(end = c(2022, 1)) %>% 
+  auto.arima(seasonal = FALSE,
+             xreg = covariates_train_gas) %>% 
+  forecast(xreg = window(covariates_full_gas, start = c(2022, 2)), 
+           h = 12)
+
+autoplot(arima.gas.cov.forecast$mean, series = "SARIMA with Covariates") +
+  autolayer(ts_gas_equiv[, 1], series = "Historical Data") +
+  ggtitle("Natural Gas - SARIMA with Covariates") +
+  ylab("Price (cents/kWh)")
+
+```
+
+```{r Examine Arima with fourier's performance on electricity and NG data}
+
+# model performance for electricity data
+arima_four_e_perf <- ts_electricity[, 2] %>% 
+  window(start = c(2022, 2)) %>% 
+  accuracy(arima.e.four.forecast$mean)
+
+# model performance for gas data
+arima_four_gas_perf <- ts_gas_equiv[, 1] %>% 
+  window(start = c(2022, 2)) %>% 
+  accuracy(arima.gas.four.forecast$mean)
+
+```
 
 
 
