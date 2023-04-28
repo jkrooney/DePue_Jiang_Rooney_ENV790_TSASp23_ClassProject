@@ -564,7 +564,7 @@ nn.e.forecast <- ts_electricity[, 2] %>%
 # neural network forecast for gas data
 nn.gas.forecast <- ts_gas_equiv[, 1] %>% 
   window(end = c(2022 ,1)) %>% 
-  nnetar(p = 3, P = 2,
+  nnetar(p = 1, P = 1,
          xreg = fourier(window(ts_gas_equiv[, 1], 
                                end = c(2022, 1)
                                ),
@@ -623,12 +623,12 @@ tbats.gas.forecast <- ts_gas_equiv[, 1] %>%
 ```{r }
 # TBATS model performance
 
-# neural network model performance for electricity data
+# TBATS model performance for electricity data
 tbats_e_perf <- ts_electricity[, 2] %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(tbats.e.forecast$mean)
 
-# neural network model performance for gas data
+# TBATS model performance for gas data
 tbats_gas_perf <- ts_gas_equiv[, 1] %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(tbats.gas.forecast$mean)
@@ -734,7 +734,7 @@ nn.cov.e.forecast <- ts_electricity[, 2] %>%
 # neural network forecast for gas data
 nn.cov.gas.forecast <- ts_gas_equiv[, 1] %>% 
   window(end = c(2022 ,1)) %>% 
-  nnetar(p = 2, P = 1,
+  nnetar(p = 1, P = 1,
          xreg = covariates_train_gas[, -1]) %>% 
   forecast(xreg = window(covariates_full_gas[, -1], start = c(2022, 2)),
            h = 12)
