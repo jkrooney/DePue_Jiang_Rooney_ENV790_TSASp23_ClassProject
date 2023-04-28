@@ -34,46 +34,6 @@
 \makeatother
 \usepackage{xcolor}
 \usepackage[margin=2.54cm]{geometry}
-\usepackage{color}
-\usepackage{fancyvrb}
-\newcommand{\VerbBar}{|}
-\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
-\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
-% Add ',fontsize=\small' for more characters per line
-\usepackage{framed}
-\definecolor{shadecolor}{RGB}{248,248,248}
-\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
-\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
-\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
-\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\BuiltInTok}[1]{#1}
-\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
-\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
-\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
-\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
-\newcommand{\ExtensionTok}[1]{#1}
-\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\ImportTok}[1]{#1}
-\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
-\newcommand{\NormalTok}[1]{#1}
-\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
-\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
-\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
-\newcommand{\RegionMarkerTok}[1]{#1}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \usepackage{graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -181,79 +141,6 @@ January 2001 through January 2023.
 
 \#\#Data
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{\#electric summary variables}
-\NormalTok{mean.elec}\OtherTok{\textless{}{-}}\FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(nc\_electricity.df}\SpecialCharTok{$}\NormalTok{price\_per\_kWh,}\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}\DecValTok{2}\NormalTok{)}
-
-\NormalTok{length.elec}\OtherTok{\textless{}{-}}\FunctionTok{length}\NormalTok{(nc\_electricity.df}\SpecialCharTok{$}\NormalTok{price\_per\_kWh)}
-
-\NormalTok{sd.elec}\OtherTok{\textless{}{-}}\FunctionTok{round}\NormalTok{(}\FunctionTok{sd}\NormalTok{(nc\_electricity.df}\SpecialCharTok{$}\NormalTok{price\_per\_kWh,}\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}\DecValTok{2}\NormalTok{)}
-
-\NormalTok{median.elec}\OtherTok{\textless{}{-}}\FunctionTok{round}\NormalTok{(}\FunctionTok{median}\NormalTok{(nc\_electricity.df}\SpecialCharTok{$}\NormalTok{price\_per\_kWh,}\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}\DecValTok{2}\NormalTok{)}
-
-\NormalTok{min.elec}\OtherTok{\textless{}{-}}\FunctionTok{min}\NormalTok{(nc\_electricity.df}\SpecialCharTok{$}\NormalTok{price\_per\_kWh,}\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
-
-\NormalTok{max.elec}\OtherTok{\textless{}{-}}\FunctionTok{max}\NormalTok{(nc\_electricity.df}\SpecialCharTok{$}\NormalTok{price\_per\_kWh,}\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
-
-
-\CommentTok{\#create summary DF for electricity}
-\NormalTok{summary\_elec}\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(length.elec, min.elec, max.elec, mean.elec, sd.elec, median.elec}
-\NormalTok{                  ) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{as.data.frame}\NormalTok{()}
-
-\CommentTok{\# rename columns}
-\FunctionTok{colnames}\NormalTok{(summary\_elec) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Observations"}\NormalTok{,}
-                          \StringTok{"Min"}\NormalTok{,}
-                          \StringTok{"Max"}\NormalTok{,}
-                          \StringTok{"Mean Price"}\NormalTok{,}
-                         \StringTok{"Std. Dev."}\NormalTok{, }
-                         \StringTok{"Median Price"}
-\NormalTok{                            )}
-
-\CommentTok{\#gas summary variables}
-\NormalTok{mean.gas}\OtherTok{\textless{}{-}}\FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(natural\_gas.df}\SpecialCharTok{$}\NormalTok{price,}\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}\DecValTok{2}\NormalTok{)}
-
-\NormalTok{length.gas}\OtherTok{\textless{}{-}}\FunctionTok{length}\NormalTok{(natural\_gas.df}\SpecialCharTok{$}\NormalTok{price)}
-
-\NormalTok{sd.gas}\OtherTok{\textless{}{-}}\FunctionTok{round}\NormalTok{(}\FunctionTok{sd}\NormalTok{(natural\_gas.df}\SpecialCharTok{$}\NormalTok{price,}\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}\DecValTok{2}\NormalTok{)}
-
-\NormalTok{median.gas}\OtherTok{\textless{}{-}}\FunctionTok{round}\NormalTok{(}\FunctionTok{median}\NormalTok{(natural\_gas.df}\SpecialCharTok{$}\NormalTok{price,}\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}\DecValTok{2}\NormalTok{)}
-
-\NormalTok{min.gas}\OtherTok{\textless{}{-}}\FunctionTok{min}\NormalTok{(natural\_gas.df}\SpecialCharTok{$}\NormalTok{price,}\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
-
-\NormalTok{max.gas}\OtherTok{\textless{}{-}}\FunctionTok{max}\NormalTok{(natural\_gas.df}\SpecialCharTok{$}\NormalTok{price,}\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
-
-\CommentTok{\# create summary DF for gas}
-\NormalTok{summary\_gas}\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(length.gas, min.gas, max.gas, mean.gas, sd.gas, median.gas}
-\NormalTok{                  ) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{as.data.frame}\NormalTok{()}
-
-\CommentTok{\# rename columns}
-\FunctionTok{colnames}\NormalTok{(summary\_gas) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Observations"}\NormalTok{,}
-                          \StringTok{"Min"}\NormalTok{,}
-                          \StringTok{"Max"}\NormalTok{,}
-                          \StringTok{"Mean Price"}\NormalTok{,}
-                         \StringTok{"Std. Dev."}\NormalTok{, }
-                         \StringTok{"Median Price"}\NormalTok{)}
-
-\NormalTok{summary\_data}\OtherTok{\textless{}{-}}\FunctionTok{rbind}\NormalTok{(summary\_gas, summary\_elec)}
-
-\NormalTok{summary\_data}\SpecialCharTok{$}\NormalTok{Variable}\OtherTok{\textless{}{-}}\FunctionTok{c}\NormalTok{(}\StringTok{"Natural Gas ($/Mcf)"}\NormalTok{,}\StringTok{"Electricity(cents/kWh)"}\NormalTok{)}
-
-\NormalTok{summary\_data}\OtherTok{\textless{}{-}}\NormalTok{summary\_data[,}\FunctionTok{c}\NormalTok{(}\DecValTok{7}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{6}\NormalTok{)]}
-
-
-\CommentTok{\# generate a visualized table to use in the report}
-\FunctionTok{kbl}\NormalTok{(summary\_data,}
-    \AttributeTok{caption =} \StringTok{"Table 1: Summary Statistics"}\NormalTok{,}
-    \AttributeTok{digits =} \FunctionTok{array}\NormalTok{(}\DecValTok{5}\NormalTok{, }\FunctionTok{ncol}\NormalTok{(summary\_data))) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{kable\_styling}\NormalTok{(}\AttributeTok{full\_width =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{position =} \StringTok{"center"}\NormalTok{, }
-                \AttributeTok{latex\_options =} \StringTok{"hold\_position"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
-  \FunctionTok{kable\_styling}\NormalTok{(}\AttributeTok{latex\_options =} \StringTok{"striped"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
 \begin{table}[!h]
 
 \caption{\label{tab:unnamed-chunk-1}Table 1: Summary Statistics}
@@ -269,78 +156,66 @@ Electricity(cents/kWh) & 265 & 7.53 & 13.51 & 10.22 & 1.30 & 10.41\\
 \end{tabular}
 \end{table}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{\# show top 10 rows of data}
+\begin{table}[!h]
 
-\NormalTok{    d1 }\OtherTok{\textless{}{-}} \FunctionTok{head}\NormalTok{(natural\_gas.df, }\DecValTok{10}\NormalTok{)}
-\NormalTok{    d2 }\OtherTok{\textless{}{-}} \FunctionTok{head}\NormalTok{(nc\_electricity.df,}\DecValTok{10}\NormalTok{)}
-    
-\NormalTok{   knitr}\SpecialCharTok{::}\FunctionTok{kables}\NormalTok{(}
-     \FunctionTok{list}\NormalTok{(knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(d1, }\AttributeTok{col.names=}\FunctionTok{c}\NormalTok{(}\StringTok{"Date"}\NormalTok{,}\StringTok{"$/Mcf"}\NormalTok{),}\AttributeTok{valign =} \StringTok{\textquotesingle{}t\textquotesingle{}}
-\NormalTok{    ),}
-   
-    \CommentTok{\# the second kable() to set the digits option}
-\NormalTok{    knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(d2, }\AttributeTok{col.names=}\FunctionTok{c}\NormalTok{(}\StringTok{"Date"}\NormalTok{,}\StringTok{"Cents/kWh"}\NormalTok{),}\AttributeTok{digits =} \DecValTok{2}\NormalTok{, }\AttributeTok{valign =} \StringTok{\textquotesingle{}t\textquotesingle{}}\NormalTok{)}
-\NormalTok{  ),}
-  \AttributeTok{caption =} \StringTok{\textquotesingle{}First 10 rows of Electricy \& Natural Gas Datasets\textquotesingle{}}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{table}
-\caption{\label{tab:unnamed-chunk-2}First 10 rows of Electricy & Natural Gas Datasets}
-
+\caption{\label{tab:unnamed-chunk-2}Sample of Cleaned Natural Gas Data}
 \begin{tabular}[t]{l|r}
 \hline
-Date & \$/Mcf\\
+year & price\\
 \hline
-Jan-1989 & 6.17\\
+\cellcolor{gray!6}{Jan-1989} & \cellcolor{gray!6}{6.17}\\
 \hline
 Feb-1989 & 6.30\\
 \hline
-Mar-1989 & 6.29\\
+\cellcolor{gray!6}{Mar-1989} & \cellcolor{gray!6}{6.29}\\
 \hline
 Apr-1989 & 6.80\\
 \hline
-May-1989 & 6.99\\
+\cellcolor{gray!6}{May-1989} & \cellcolor{gray!6}{6.99}\\
 \hline
 Jun-1989 & 8.02\\
 \hline
-Jul-1989 & 8.71\\
+\cellcolor{gray!6}{Jul-1989} & \cellcolor{gray!6}{8.71}\\
 \hline
 Aug-1989 & 8.97\\
 \hline
-Sep-1989 & 8.68\\
+\cellcolor{gray!6}{Sep-1989} & \cellcolor{gray!6}{8.68}\\
 \hline
 Oct-1989 & 7.44\\
 \hline
 \end{tabular}
+\end{table}
+
+\begin{wraptable}{l}{0pt}
+
+\caption{\label{tab:unnamed-chunk-2}Sample of Cleaned Electricity Data}
+\centering
 \begin{tabular}[t]{l|r}
 \hline
-Date & Cents/kWh\\
+my\_date & price\_per\_kWh\\
 \hline
-Jan.2001 & 7.53\\
+\cellcolor{gray!6}{Jan.2001} & \cellcolor{gray!6}{7.53}\\
 \hline
 Feb.2001 & 7.77\\
 \hline
-Mar.2001 & 8.02\\
+\cellcolor{gray!6}{Mar.2001} & \cellcolor{gray!6}{8.02}\\
 \hline
 Apr.2001 & 8.00\\
 \hline
-May.2001 & 8.22\\
+\cellcolor{gray!6}{May.2001} & \cellcolor{gray!6}{8.22}\\
 \hline
 Jun.2001 & 8.19\\
 \hline
-Jul.2001 & 8.31\\
+\cellcolor{gray!6}{Jul.2001} & \cellcolor{gray!6}{8.31}\\
 \hline
 Aug.2001 & 8.35\\
 \hline
-Sep.2001 & 8.35\\
+\cellcolor{gray!6}{Sep.2001} & \cellcolor{gray!6}{8.35}\\
 \hline
 Oct.2001 & 8.67\\
 \hline
 \end{tabular}
-\end{table}
+\end{wraptable}
 
 \#\#Analysis We first created initial time series objects and plotted
 them, along with ACF and PACF plots to gain an initial sense of what the
@@ -397,26 +272,26 @@ optimal p and P conbination by trying different combinations.
 
 \begin{verbatim}
 ##            ME      RMSE       MAE        MPE      MAPE      ACF1 Theil's U
-## 10 -1.1711676 1.2950681 1.1711676 -10.501320 10.501320 0.2845610 45.327277
-## 11 -0.8747622 0.9873096 0.8747622  -7.624166  7.624166 0.1874510  4.714693
-## 20 -1.0305814 1.1602401 1.0305814  -9.119368  9.119368 0.2985403 17.146479
-## 21 -0.8864306 1.0007090 0.8864306  -7.736742  7.736742 0.2062883  4.752475
-## 22 -0.8765816 0.9999967 0.8765816  -7.653383  7.653383 0.2136315  4.525570
-## 12 -0.8705705 0.9920435 0.8705705  -7.592814  7.592814 0.2041032  4.684720
-## 31 -0.8822567 1.0015038 0.8822567  -7.700592  7.700592 0.2254087  4.769239
+## 10 -1.1711526 1.2950538 1.1711526 -10.501171 10.501171 0.2845602 45.324045
+## 11 -0.8750556 0.9882386 0.8750556  -7.626764  7.626764 0.1899188  4.788693
+## 20 -1.0249802 1.1558415 1.0249802  -9.065548  9.065548 0.2994269 17.292650
+## 21 -0.8843782 0.9987094 0.8843782  -7.716575  7.716575 0.2088288  4.797234
+## 22 -0.8741890 0.9990543 0.8741890  -7.630598  7.630598 0.2245965  4.603708
+## 12 -0.8718298 0.9911932 0.8718298  -7.603434  7.603434 0.1946700  4.533869
+## 31 -0.8874391 1.0062794 0.8874391  -7.751384  7.751384 0.2285421  4.625552
 \end{verbatim}
 
 \begin{verbatim}
 ##           ME     RMSE      MAE       MPE     MAPE      ACF1 Theil's U
-## 10 -2.290121 3.002818 2.395185 -33.52481 34.93356 0.6286304 18.470188
-## 11 -1.800175 2.259309 1.984368 -25.75572 27.97061 0.2949639  2.484188
-## 20 -2.469839 3.271987 2.666850 -39.62750 42.10910 0.6803329 11.559340
-## 21 -1.887130 2.218849 1.964267 -27.42957 28.23916 0.2355902  2.507142
-## 22 -2.029781 2.365095 2.071205 -30.25346 30.69823 0.2639827  2.699636
-## 12 -1.904641 2.314131 1.972261 -27.59615 28.31014 0.2764386  2.602489
-## 31 -1.904841 2.235465 1.964652 -27.94938 28.58405 0.2429978  2.544937
-## 32 -1.908856 2.238207 1.965641 -28.09742 28.70114 0.2533527  2.540051
-## 33 -2.078605 2.385349 2.150881 -31.43042 32.19133 0.1757300  2.520507
+## 10 -2.290371 3.001971 2.394652 -33.51951 34.91864 0.6283229 18.489672
+## 11 -1.797333 2.250825 1.982031 -25.68840 27.91033 0.2724584  2.431628
+## 20 -2.470905 3.290321 2.692904 -39.70461 42.48297 0.6806823 12.006741
+## 21 -1.911384 2.248048 1.987781 -27.98125 28.78345 0.2551216  2.559254
+## 22 -2.017579 2.368672 2.067081 -30.23271 30.76147 0.2751018  2.684193
+## 12 -1.904689 2.314263 1.976273 -27.63154 28.38549 0.2766502  2.583952
+## 31 -1.915628 2.249301 1.971244 -28.10974 28.70148 0.2603616  2.588153
+## 32 -1.943870 2.272423 1.996773 -28.78513 29.34898 0.2658964  2.598376
+## 33 -2.074424 2.380260 2.155633 -32.06930 32.91945 0.1891883  2.453748
 \end{verbatim}
 
 We found that the combination 11 (p = 1 and P = 1) has the best modeling
@@ -492,11 +367,11 @@ ARIMA with Fourier & -0.69901 & 0.87542 & 0.69901 & -6.04750 & 6.04750 & 0.08222
 \hline
 \cellcolor{red}{STL} & \cellcolor{red}{-0.58551} & \cellcolor{red}{0.76708} & \cellcolor{red}{0.63447} & \cellcolor{red}{-5.01390} & \cellcolor{red}{5.43949} & \cellcolor{red}{0.25835} & \cellcolor{red}{2.36056}\\
 \hline
-Neural Network & -1.04692 & 1.21150 & 1.04692 & -9.38345 & 9.38345 & 0.17605 & 3.05874\\
+Neural Network & -1.03461 & 1.19731 & 1.03461 & -9.26279 & 9.26279 & 0.17545 & 2.98240\\
 \hline
 TBATS & -0.74971 & 0.89063 & 0.75658 & -6.50522 & 6.56626 & 0.23462 & 2.86546\\
 \hline
-Neural Network with Covariates & -0.93650 & 1.11811 & 0.96839 & -8.35125 & 8.63093 & 0.40539 & 2.53827\\
+Neural Network with Covariates & -0.95381 & 1.12329 & 0.98901 & -8.49812 & 8.80636 & 0.37915 & 2.63625\\
 \hline
 SARIMA with Tem and Fourier & -0.67930 & 0.81795 & 0.69585 & -5.83257 & 5.97890 & 0.26220 & 2.92127\\
 \hline
@@ -521,11 +396,11 @@ ARIMA with Fourier & -1.73517 & 2.31199 & 1.83980 & -25.17030 & 26.24979 & 0.578
 \hline
 \cellcolor{red}{STL} & \cellcolor{red}{-1.04788} & \cellcolor{red}{1.35599} & \cellcolor{red}{1.11314} & \cellcolor{red}{-14.03428} & \cellcolor{red}{14.80904} & \cellcolor{red}{-0.33348} & \cellcolor{red}{1.28849}\\
 \hline
-Neural Network & -1.77537 & 2.18869 & 1.85250 & -25.66242 & 26.47198 & 0.53020 & 2.74593\\
+Neural Network & -1.83470 & 2.19935 & 1.91016 & -26.69232 & 27.48516 & 0.44891 & 2.65504\\
 \hline
 TBATS & -1.72858 & 1.89245 & 1.72858 & -24.53539 & 24.53539 & -0.32231 & 2.08610\\
 \hline
-Neural Network with Covariates & -1.21583 & 1.67415 & 1.43423 & -15.07725 & 17.81655 & 0.48082 & 2.10601\\
+Neural Network with Covariates & -1.18195 & 1.63706 & 1.33544 & -14.33293 & 16.32618 & 0.47056 & 2.03497\\
 \hline
 SARIMA with Tem and Fourier & -1.63275 & 1.79495 & 1.63275 & -21.52013 & 21.52013 & -0.01071 & 1.95239\\
 \hline

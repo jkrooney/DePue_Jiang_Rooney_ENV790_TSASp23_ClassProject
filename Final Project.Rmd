@@ -143,20 +143,29 @@ kbl(summary_data,
   kable_styling(latex_options = "striped")
 ```
 
-```{r, results='asis', echo=FALSE}
+```{r, echo=FALSE}
 # show top 10 rows of data
 
     d1 <- head(natural_gas.df, 10)
     d2 <- head(nc_electricity.df,10)
     
-   knitr::kables(
-     list(knitr::kable(d1, col.names=c("Date","$/Mcf"),valign = 't'
-    ),
    
-    # the second kable() to set the digits option
-    knitr::kable(d2, col.names=c("Date","Cents/kWh"),digits = 2, valign = 't')
-  ),
-  caption = 'First 10 rows of Electricy & Natural Gas Datasets')
+     
+     kbl(d1,
+    caption = "Sample of Cleaned Natural Gas Data",
+    digits = array(5, ncol(d1))) %>% 
+  kable_styling(full_width = FALSE, position = "left", 
+                latex_options = "hold_position") %>% 
+  kable_styling(latex_options = "striped")
+  
+  kbl(d2,
+    caption = "Sample of Cleaned Electricity Data",
+    digits = array(5, ncol(d2))) %>% 
+  kable_styling(full_width = FALSE, position = "float_left", 
+                latex_options = "hold_position") %>% 
+  kable_styling(latex_options = "striped")
+  
+   
 ```
 
 
