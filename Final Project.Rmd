@@ -732,7 +732,7 @@ covariates_full_gas <- cbind(ts_gas_equiv_war[, 2], ts_temperature, fourier_full
   
 ```
 
-After creating all the covariates, we repeated our modeling but with covariates to improve the accuracy of the models. First we incorporated covairates to neural network model. 
+After creating all the covariates, we repeated our modeling but with covariates to improve the accuracy of the models. First we incorporated covariates to neural network model. 
 
 ```{r}
 # Use Neural Network, temperature, UKRWAR, and fourier to model
