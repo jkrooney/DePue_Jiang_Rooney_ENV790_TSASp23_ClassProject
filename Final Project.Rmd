@@ -144,20 +144,20 @@ legend("topleft", bty="n", lty=c(1,1), col=c("red","blue"),
 
 # ACF and PACF of electricity data
 par(mfrow=c(1,2))
-Acf(ts_electricity[,2], lag.max=40, main="ACF Electricity")
+Acf(ts_electricity[,1], lag.max=40, main="ACF Electricity")
 Acf(ts_elec_ns, lag.max=40, main="ACF Non-Seasonal Electricity")
 
 par(mfrow=c(1,2))
-Pacf(ts_electricity[,2], lag.max=40, main="PACF Electricity")
+Pacf(ts_electricity[,1], lag.max=40, main="PACF Electricity")
 Pacf(ts_elec_ns, lag.max=40, main="PACF Non-Seasonal Electricity")
 
 # ACF and PACF of natural gas data
 par(mfrow=c(1,2))
-Acf(ts_gas_equiv[,1], lag.max=40, main="ACF Natural Gas")
+Acf(ts_gas_equiv, lag.max=40, main="ACF Natural Gas")
 Acf(ts_gas_ns, lag.max=40, main="ACF Non-Seasonal Gas")
 
 par(mfrow=c(1,2))
-Pacf(ts_gas_equiv[,1], lag.max=40, main="PACF Natural Gas")
+Pacf(ts_gas_equiv, lag.max=40, main="PACF Natural Gas")
 Pacf(ts_gas_ns, lag.max=40, main="PACF Non-Seasonal Gas")
 ```
 
@@ -166,10 +166,10 @@ We then decomposed the time series objects for further analysis.
 ```{r decompose ts, echo=FALSE}
 #Decompose TS
 
-decomp_elec<-decompose(ts_electricity[,2], type="additive")
-decomp_gas<-decompose(ts_gas_equiv[,1], type="multiplicative")
+decomp_elec<-decompose(ts_electricity, type="additive")
+decomp_gas<-decompose(ts_gas_equiv, type="multiplicative")
 
-ts_gas_equiv[,1] %>% 
+ts_gas_equiv %>% 
   window(start = c(2013,1), end = c(2023,1)) %>%
   stl(s.window = "periodic") %>% 
   plot()
@@ -177,8 +177,8 @@ ts_gas_equiv[,1] %>%
 plot(decomp_elec)
 
 #remove seasonality
-ts_elec_ns<-(ts_electricity[,2] - decomp_elec$seasonal)
-ts_gas_ns<-(ts_gas_equiv[,1] - decomp_gas$seasonal)
+ts_elec_ns<-(ts_electricity - decomp_elec$seasonal)
+ts_gas_ns<-(ts_gas_equiv - decomp_gas$seasonal)
 
 ```
 
@@ -192,20 +192,20 @@ While the Seasonal ARIMA was a logical first model to try, we quickly felt that 
 ```{r Seasonal Arima, echo=FALSE}
 #forecast Electricity SARIMA
 
-arima.e.model<-auto.arima(window(ts_electricity[, 2], end=c(2022,1)))
+arima.e.model<-auto.arima(window(ts_electricity, end=c(2022,1)))
 arima.e.forecast<-forecast(arima.e.model, h=12)
 
-autoplot(ts_electricity[, 2]) +
+autoplot(ts_electricity) +
   autolayer(arima.e.forecast$mean, series = "SARIMA") +
   ylab("Price (cents/kWh)") +
   ggtitle("Electricity - SARIMA")
   # performance is not that good
 
 #Gas SARIMA forecast
-arima.gas.model<-auto.arima(window(ts_gas_equiv[, 1], end=c(2022,1)))
+arima.gas.model<-auto.arima(window(ts_gas_equiv, end=c(2022,1)))
 arima.gas.forecast<-forecast(arima.gas.model, h=12)
 
-autoplot(ts_gas_equiv[, 1])+
+autoplot(ts_gas_equiv)+
   autolayer(arima.gas.forecast$mean, series = "SARIMA") +
   ylab("Price (cents/kWh)") +
   ggtitle("Natural Gas - SARIMA")
@@ -215,13 +215,13 @@ autoplot(ts_gas_equiv[, 1])+
 ```{r examine SARIMA performance}
 
 # model performance for electricity data
-sarima_e_perf <- ts_electricity[, 2] %>% 
+sarima_e_perf <- ts_electricity %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(arima.e.forecast$mean)
 
 
 # model performance for gas data
-sarima_gas_perf <- ts_gas_equiv[, 1] %>% 
+sarima_gas_perf <- ts_gas_equiv %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(arima.gas.forecast$mean)
 
@@ -231,37 +231,37 @@ ARIMA with Fourier terms is known as a dynamic harmonic regression model with an
 
 ```{r Arima with Fourier terms}
 # arima with fourier terms for eletricity
-arima.e.four.forecast <- ts_electricity[, 2] %>% 
+arima.e.four.forecast <- ts_electricity %>% 
   window(end = c(2022, 1)) %>% 
   auto.arima(seasonal = FALSE, 
-             xreg = fourier(window(ts_electricity[, 2], end = c(2022, 1)), 
+             xreg = fourier(window(ts_electricity, end = c(2022, 1)), 
                             K = 6)) %>% 
-  forecast(xreg = fourier(window(ts_electricity[, 2], 
+  forecast(xreg = fourier(window(ts_electricity, 
                                  start = c(2022,2)
                                  ),
                             K = 6),
            h = 12)
 
 autoplot(arima.e.four.forecast$mean, series = "ARIMA with Fourier Terms") +
-  autolayer(ts_electricity[, 2], series = "Historical Data") +
+  autolayer(ts_electricity, series = "Historical Data") +
   ggtitle("Electricity - ARIMA with Fourier Terms") +
   ylab("Price (cents/kWh)")
 
 # arima with fourier terms for gas
-arima.gas.four.forecast <- ts_gas_equiv[, 1] %>% 
+arima.gas.four.forecast <- ts_gas_equiv %>% 
   window(end = c(2022, 1)) %>% 
   auto.arima(seasonal = FALSE,
-             xreg = fourier(window(ts_gas_equiv[, 1], end = c(2022, 1)), 
+             xreg = fourier(window(ts_gas_equiv, end = c(2022, 1)), 
                             K = 6)
              ) %>% 
-  forecast(xreg = fourier(window(ts_gas_equiv[, 1], 
+  forecast(xreg = fourier(window(ts_gas_equiv, 
                                  start = c(2022, 2)
                                  ),
                           K = 6), 
            h = 12)
 
 autoplot(arima.gas.four.forecast$mean, series = "ARIMA with Fourier Terms") +
-  autolayer(ts_gas_equiv[, 1], series = "Historical Data") +
+  autolayer(ts_gas_equiv, series = "Historical Data") +
   ggtitle("Natural Gas - ARIMA with Fourier Terms") +
   ylab("Price (cents/kWh)")
 
@@ -270,12 +270,12 @@ autoplot(arima.gas.four.forecast$mean, series = "ARIMA with Fourier Terms") +
 ```{r Examine Arima with fourier's performance on electricity and NG data}
 
 # model performance for electricity data
-arima_four_e_perf <- ts_electricity[, 2] %>% 
+arima_four_e_perf <- ts_electricity %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(arima.e.four.forecast$mean)
 
 # model performance for gas data
-arima_four_gas_perf <- ts_gas_equiv[, 1] %>% 
+arima_four_gas_perf <- ts_gas_equiv %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(arima.gas.four.forecast$mean)
 
@@ -285,21 +285,21 @@ Then we tried STL model
 ```{r Use STL to model}
 
 # STL for electricity
-stl.e.forecast <- ts_electricity[, 2] %>% 
+stl.e.forecast <- ts_electricity %>% 
   window(end = c(2022, 1)) %>% 
   stlf(h = 12)
 
 autoplot(stl.e.forecast$mean, series = "STL + ETS") +
-  autolayer(ts_electricity[, 2], series = "Historical Data") +
+  autolayer(ts_electricity, series = "Historical Data") +
   ggtitle("Electricity - STL + EST") +
   ylab("Price (cents/kWh)")
 
 # STL for gas
-stl.gas.forecast <- ts_gas_equiv[, 1] %>% 
+stl.gas.forecast <- ts_gas_equiv %>% 
   window(end = c(2022, 1)) %>% 
   stlf(h = 12)
 
-autoplot(ts_gas_equiv[, 1], series = "Historical Data") +
+autoplot(ts_gas_equiv, series = "Historical Data") +
   autolayer(stl.gas.forecast$mean, series = "STL + ETS") +
   ggtitle("Natural Gas - STL + EST") +
   ylab("Price (cents/kWh)")
@@ -309,12 +309,12 @@ autoplot(ts_gas_equiv[, 1], series = "Historical Data") +
 ```{r Examine STL's performance on electricity and NG data}
 
 # model performance for electricity data
-stl_e_perf <- ts_electricity[, 2] %>% 
+stl_e_perf <- ts_electricity %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(stl.e.forecast$mean)
 
 # model performance for gas data
-stl_gas_perf <- ts_gas_equiv[, 1] %>% 
+stl_gas_perf <- ts_gas_equiv %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(stl.gas.forecast$mean)
 
@@ -327,86 +327,86 @@ Then we tried to use neural network model. We used nnetar() in forecast package.
 # find the optimal p and P values for neural network without fourier for electricity series
 
 ## p = 1, P = 0
-nn.e.forecast.10 <- ts_electricity[, 2] %>% 
+nn.e.forecast.10 <- ts_electricity %>% 
   window(end = c(2022 ,1)) %>% 
   nnetar(p = 1, P = 0, # 2 and 1 are randomly decided. To find the optimal one, 
          # we need to run a couple of combinations to find the best one
          ) %>% 
   forecast(h = 12)
 
-nn.e.10.score <- ts_electricity[, 2] %>% 
+nn.e.10.score <- ts_electricity %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(nn.e.forecast.10$mean)
 
 ## p = 1, P = 1
-nn.e.forecast.11 <- ts_electricity[, 2] %>% 
+nn.e.forecast.11 <- ts_electricity %>% 
   window(end = c(2022 ,1)) %>% 
   nnetar(p = 1, P = 1, # 2 and 1 are randomly decided. To find the optimal one, 
          # we need to run a couple of combinations to find the best one
          ) %>% 
   forecast(h = 12)
 
-nn.e.11.score <- ts_electricity[, 2] %>% 
+nn.e.11.score <- ts_electricity %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(nn.e.forecast.11$mean)
 
 ## p = 2, P = 0
-nn.e.forecast.20 <- ts_electricity[, 2] %>% 
+nn.e.forecast.20 <- ts_electricity %>% 
   window(end = c(2022 ,1)) %>% 
   nnetar(p = 2, P = 0, # 2 and 1 are randomly decided. To find the optimal one, 
          # we need to run a couple of combinations to find the best one
          ) %>% 
   forecast(h = 12)
 
-nn.e.20.score <- ts_electricity[, 2] %>% 
+nn.e.20.score <- ts_electricity %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(nn.e.forecast.20$mean)
 
 ## p = 2, P = 1
-nn.e.forecast.21 <- ts_electricity[, 2] %>% 
+nn.e.forecast.21 <- ts_electricity %>% 
   window(end = c(2022 ,1)) %>% 
   nnetar(p = 2, P = 1, # 2 and 1 are randomly decided. To find the optimal one, 
          # we need to run a couple of combinations to find the best one
          ) %>% 
   forecast(h = 12)
 
-nn.e.21.score <- ts_electricity[, 2] %>% 
+nn.e.21.score <- ts_electricity %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(nn.e.forecast.21$mean)
 
 ## p = 2, P = 2
-nn.e.forecast.22 <- ts_electricity[, 2] %>% 
+nn.e.forecast.22 <- ts_electricity %>% 
   window(end = c(2022 ,1)) %>% 
   nnetar(p = 2, P = 2, # 2 and 1 are randomly decided. To find the optimal one, 
          # we need to run a couple of combinations to find the best one
          ) %>% 
   forecast(h = 12)
 
-nn.e.22.score <- ts_electricity[, 2] %>% 
+nn.e.22.score <- ts_electricity %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(nn.e.forecast.22$mean)
 
 ## p = 1, P = 2
-nn.e.forecast.12 <- ts_electricity[, 2] %>% 
+nn.e.forecast.12 <- ts_electricity %>% 
   window(end = c(2022 ,1)) %>% 
   nnetar(p = 1, P = 2, # 2 and 1 are randomly decided. To find the optimal one, 
          # we need to run a couple of combinations to find the best one
          ) %>% 
   forecast(h = 12)
 
-nn.e.12.score <- ts_electricity[, 2] %>% 
+nn.e.12.score <- ts_electricity %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(nn.e.forecast.12$mean)
 
 ## p = 3, P = 1
-nn.e.forecast.31 <- ts_electricity[, 2] %>% 
+nn.e.forecast.31 <- ts_electricity %>% 
   window(end = c(2022 ,1)) %>% 
   nnetar(p = 3, P = 1, # 2 and 1 are randomly decided. To find the optimal one, 
          # we need to run a couple of combinations to find the best one
          ) %>% 
   forecast(h = 12)
 
-nn.e.31.score <- ts_electricity[, 2] %>% 
+nn.e.31.score <- ts_electricity %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(nn.e.forecast.31$mean)
 
@@ -425,110 +425,110 @@ nn.e.scores ## 11 has the lowest RMSE and 12 has the lowest MAPE
 # find the optimal p and P values for neural network without fourier for natural gas series
 
 ## p = 1, P = 0
-nn.gas.forecast.10 <- ts_gas_equiv[, 1] %>% 
+nn.gas.forecast.10 <- ts_gas_equiv %>% 
   window(end = c(2022 ,1)) %>% 
   nnetar(p = 1, P = 0, # 2 and 1 are randomly decided. To find the optimal one, 
          # we need to run a couple of combinations to find the best one
          ) %>% 
   forecast(h = 12)
 
-nn.gas.10.score <- ts_gas_equiv[, 1] %>% 
+nn.gas.10.score <- ts_gas_equiv %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(nn.gas.forecast.10$mean)
 
 ## p = 1, P = 1
-nn.gas.forecast.11 <- ts_gas_equiv[, 1] %>% 
+nn.gas.forecast.11 <- ts_gas_equiv %>% 
   window(end = c(2022 ,1)) %>% 
   nnetar(p = 1, P = 1, # 2 and 1 are randomly decided. To find the optimal one, 
          # we need to run a couple of combinations to find the best one
          ) %>% 
   forecast(h = 12)
 
-nn.gas.11.score <- ts_gas_equiv[, 1] %>% 
+nn.gas.11.score <- ts_gas_equiv %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(nn.gas.forecast.11$mean)
 
 ## p = 2, P = 0
-nn.gas.forecast.20 <- ts_gas_equiv[, 1] %>% 
+nn.gas.forecast.20 <- ts_gas_equiv %>% 
   window(end = c(2022 ,1)) %>% 
   nnetar(p = 2, P = 0, # 2 and 1 are randomly decided. To find the optimal one, 
          # we need to run a couple of combinations to find the best one
          ) %>% 
   forecast(h = 12)
 
-nn.gas.20.score <- ts_gas_equiv[, 1] %>% 
+nn.gas.20.score <- ts_gas_equiv %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(nn.gas.forecast.20$mean)
 
 ## p = 2, P = 1
-nn.gas.forecast.21 <- ts_gas_equiv[, 1] %>% 
+nn.gas.forecast.21 <- ts_gas_equiv %>% 
   window(end = c(2022 ,1)) %>% 
   nnetar(p = 2, P = 1, # 2 and 1 are randomly decided. To find the optimal one, 
          # we need to run a couple of combinations to find the best one
          ) %>% 
   forecast(h = 12)
 
-nn.gas.21.score <- ts_gas_equiv[, 1] %>% 
+nn.gas.21.score <- ts_gas_equiv %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(nn.gas.forecast.21$mean)
 
 ## p = 2, P = 2
-nn.gas.forecast.22 <- ts_gas_equiv[, 1] %>% 
+nn.gas.forecast.22 <- ts_gas_equiv %>% 
   window(end = c(2022 ,1)) %>% 
   nnetar(p = 2, P = 2, # 2 and 1 are randomly decided. To find the optimal one, 
          # we need to run a couple of combinations to find the best one
          ) %>% 
   forecast(h = 12)
 
-nn.gas.22.score <- ts_gas_equiv[, 1] %>% 
+nn.gas.22.score <- ts_gas_equiv %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(nn.gas.forecast.22$mean)
 
 ## p = 1, P = 2
-nn.gas.forecast.12 <- ts_gas_equiv[, 1] %>% 
+nn.gas.forecast.12 <- ts_gas_equiv %>% 
   window(end = c(2022 ,1)) %>% 
   nnetar(p = 1, P = 2, # 2 and 1 are randomly decided. To find the optimal one, 
          # we need to run a couple of combinations to find the best one
          ) %>% 
   forecast(h = 12)
 
-nn.gas.12.score <- ts_gas_equiv[, 1] %>% 
+nn.gas.12.score <- ts_gas_equiv %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(nn.gas.forecast.12$mean)
 
 ## p = 3, P = 1
-nn.gas.forecast.31 <- ts_gas_equiv[, 1] %>% 
+nn.gas.forecast.31 <- ts_gas_equiv %>% 
   window(end = c(2022 ,1)) %>% 
   nnetar(p = 3, P = 1, # 2 and 1 are randomly decided. To find the optimal one, 
          # we need to run a couple of combinations to find the best one
          ) %>% 
   forecast(h = 12)
 
-nn.gas.31.score <- ts_gas_equiv[, 1] %>% 
+nn.gas.31.score <- ts_gas_equiv %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(nn.gas.forecast.31$mean)
 
 ## p = 3, P = 2
-nn.gas.forecast.32 <- ts_gas_equiv[, 1] %>% 
+nn.gas.forecast.32 <- ts_gas_equiv %>% 
   window(end = c(2022 ,1)) %>% 
   nnetar(p = 3, P = 1, # 2 and 1 are randomly decided. To find the optimal one, 
          # we need to run a couple of combinations to find the best one
          ) %>% 
   forecast(h = 12)
 
-nn.gas.32.score <- ts_gas_equiv[, 1] %>% 
+nn.gas.32.score <- ts_gas_equiv %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(nn.gas.forecast.32$mean)
 
 ## p = 3, P = 3
-nn.gas.forecast.33 <- ts_gas_equiv[, 1] %>% 
+nn.gas.forecast.33 <- ts_gas_equiv %>% 
   window(end = c(2022 ,1)) %>% 
   nnetar(p = 3, P = 3, # 2 and 1 are randomly decided. To find the optimal one, 
          # we need to run a couple of combinations to find the best one
          ) %>% 
   forecast(h = 12)
 
-nn.gas.33.score <- ts_gas_equiv[, 1] %>% 
+nn.gas.33.score <- ts_gas_equiv %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(nn.gas.forecast.33$mean)
 
@@ -546,31 +546,31 @@ We found that the combination 11 (p = 1 and P = 1) has the best modeling perform
 
 ```{r Use Neural Network and fourier to model}
 # neural network forecast for electricity data
-nn.e.forecast <- ts_electricity[, 2] %>% 
+nn.e.forecast <- ts_electricity %>% 
   window(end = c(2022 ,1)) %>% 
   nnetar(p = 1, P = 1, # 2 and 1 are randomly decided. To find the optimal one, 
          # we need to run a couple of combinations to find the best one
-         xreg = fourier(window(ts_electricity[, 2], 
+         xreg = fourier(window(ts_electricity, 
                                end = c(2022, 1)
                                ),
                         K = 6)
          ) %>% 
-  forecast(xreg = fourier(window(ts_electricity[, 2], 
+  forecast(xreg = fourier(window(ts_electricity, 
                                  start = c(2022, 2)
                                  ),
                           K = 6),
            h = 12)
 
 # neural network forecast for gas data
-nn.gas.forecast <- ts_gas_equiv[, 1] %>% 
+nn.gas.forecast <- ts_gas_equiv %>% 
   window(end = c(2022 ,1)) %>% 
   nnetar(p = 1, P = 1,
-         xreg = fourier(window(ts_gas_equiv[, 1], 
+         xreg = fourier(window(ts_gas_equiv, 
                                end = c(2022, 1)
                                ),
                         K = 6)
          ) %>% 
-  forecast(xreg = fourier(window(ts_gas_equiv[, 1], 
+  forecast(xreg = fourier(window(ts_gas_equiv, 
                                  start = c(2022, 2)
                                  ),
                           K = 6),
@@ -578,12 +578,12 @@ nn.gas.forecast <- ts_gas_equiv[, 1] %>%
 
 
 autoplot(nn.e.forecast$mean, series = "Neural Network") +
-  autolayer(ts_electricity[, 2], series = "Historical Data") +
+  autolayer(ts_electricity, series = "Historical Data") +
   ggtitle("Electricity - Neural Network") +
   ylab("Price (cents/kWh)")
 
 autoplot(nn.gas.forecast$mean, series = "Neural Network") +
-  autolayer(ts_gas_equiv[, 1], series = "Historical Data") +
+  autolayer(ts_gas_equiv, series = "Historical Data") +
   ggtitle("Natural Gas - Neural Network") +
   ylab("Price (cents/kWh)")
 ```
@@ -592,28 +592,28 @@ autoplot(nn.gas.forecast$mean, series = "Neural Network") +
 # neutral network model performance
 
 # neural network model performance for electricity data
-nn_e_perf <- ts_electricity[, 2] %>% 
+nn_e_perf <- ts_electricity %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(nn.e.forecast$mean)
 
 # neural network model performance for gas data
-nn_gas_perf <- ts_gas_equiv[, 1] %>% 
+nn_gas_perf <- ts_gas_equiv %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(nn.gas.forecast$mean)
 ```
 
 Then we tried TBATS models for electricity and natural gas series
-```{r }
+```{r warning=FALSE}
 # TBATS model
 
 # TBATS for electricity
-tbats.e.forecast <- ts_electricity[, 2] %>% 
+tbats.e.forecast <- ts_electricity %>% 
   window(end = c(2022, 1)) %>% 
   tbats() %>% 
   forecast(h = 12)
 
 # TBATS for natural gas
-tbats.gas.forecast <- ts_gas_equiv[, 1] %>% 
+tbats.gas.forecast <- ts_gas_equiv %>% 
   window(end = c(2022, 1)) %>% 
   tbats() %>% 
   forecast(h = 12)
@@ -624,12 +624,12 @@ tbats.gas.forecast <- ts_gas_equiv[, 1] %>%
 # TBATS model performance
 
 # TBATS model performance for electricity data
-tbats_e_perf <- ts_electricity[, 2] %>% 
+tbats_e_perf <- ts_electricity %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(tbats.e.forecast$mean)
 
 # TBATS model performance for gas data
-tbats_gas_perf <- ts_gas_equiv[, 1] %>% 
+tbats_gas_perf <- ts_gas_equiv%>% 
   window(start = c(2022, 2)) %>% 
   accuracy(tbats.gas.forecast$mean)
 ```
@@ -649,7 +649,7 @@ natural_gas.df$UKRWAR <- ifelse(natural_gas.df$index >= 399, 1, 0)
 
 natural_gas.df <- natural_gas.df[, c(-1, -6)]
 
-ts_gas_equiv<-ts(natural_gas.df[,c(3,4)], start=c(1989,1), frequency=12) %>% 
+ts_gas_equiv_war<-ts(natural_gas.df[,c(3,4)], start=c(1989,1), frequency=12) %>% 
   window(start = c(2001, 1))
 
 # create an indicator variable for Ukraine War for electricity
@@ -663,7 +663,7 @@ nc_electricity.df <- nc_electricity.df[, -1]
 
 # coerce electricity to a time series object
 
-ts_electricity<-ts(rev(nc_electricity.df[,2:3]), start=c(2001,1), frequency=12)
+ts_electricity_war<-ts(rev(nc_electricity.df[,2:3]), start=c(2001,1), frequency=12)
 
 
 # import temperature data
@@ -680,29 +680,29 @@ ts_temperature <- temperautre[,3] %>%
 # create a data frame for covariates for electricity (2001-2022)
 # we need to do this because electricity and natural gas 
 # have different fourier terms
-fourier_train_e <- fourier(window(ts_electricity[, 2],
+fourier_train_e <- fourier(window(ts_electricity_war[, 2],
                                 end = c(2022, 1)),
                          K = 6)
 
-covariates_train_e <- ts_electricity[, 1] %>% 
+covariates_train_e <- ts_electricity_war[, 1] %>% 
   window(end = c(2022, 1)) %>% 
   cbind(window(ts_temperature, end = c(2022,1)),
         fourier_train_e)
 
 
 # create covariates data frame for electricity (2001-2023)
-fourier_full_e <- fourier(window(ts_electricity[, 2],
+fourier_full_e <- fourier(window(ts_electricity_war[, 2],
                                 end = c(2023, 1)),
                          K = 6)
 
-covariates_full_e <- cbind(ts_electricity[, 1], ts_temperature, fourier_full_e)
+covariates_full_e <- cbind(ts_electricity_war[, 1], ts_temperature, fourier_full_e)
 
 # create covariates data frame for natural gas (2001-2022)
-fourier_train_gas <- fourier(window(ts_gas_equiv[, 1],
+fourier_train_gas <- fourier(window(ts_gas_equiv_war[, 1],
                                 end = c(2022, 1)),
                          K = 6)
 
-covariates_train_gas <- ts_gas_equiv[, 2] %>% 
+covariates_train_gas <- ts_gas_equiv_war[, 2] %>% 
   window(end = c(2022, 1)) %>% 
   cbind(window(ts_temperature, end = c(2022,1)
                ),
@@ -710,11 +710,11 @@ covariates_train_gas <- ts_gas_equiv[, 2] %>%
 
 
 # create covariates data frame for electricity (2001-2023)
-fourier_full_gas <- fourier(window(ts_gas_equiv[, 1],
+fourier_full_gas <- fourier(window(ts_gas_equiv_war[, 1],
                                 end = c(2023, 1)),
                          K = 6)
 
-covariates_full_gas <- cbind(ts_gas_equiv[, 2], ts_temperature, fourier_full_gas)
+covariates_full_gas <- cbind(ts_gas_equiv_war[, 2], ts_temperature, fourier_full_gas)
   
 ```
 
@@ -724,7 +724,7 @@ After creating all the covariates, we repeated our modeling but with covariates 
 # Use Neural Network, temperature, UKRWAR, and fourier to model
 
 # neural network forecast for electricity data
-nn.cov.e.forecast <- ts_electricity[, 2] %>% 
+nn.cov.e.forecast <- ts_electricity_war[, 2] %>% 
   window(end = c(2022 ,1)) %>% 
   nnetar(p = 1, P = 1,
          xreg = covariates_train_e[, -1]) %>% 
@@ -732,7 +732,7 @@ nn.cov.e.forecast <- ts_electricity[, 2] %>%
            h = 12)
 
 # neural network forecast for gas data
-nn.cov.gas.forecast <- ts_gas_equiv[, 1] %>% 
+nn.cov.gas.forecast <- ts_gas_equiv_war[, 1] %>% 
   window(end = c(2022 ,1)) %>% 
   nnetar(p = 1, P = 1,
          xreg = covariates_train_gas[, -1]) %>% 
@@ -740,12 +740,12 @@ nn.cov.gas.forecast <- ts_gas_equiv[, 1] %>%
            h = 12)
 
 autoplot(nn.cov.e.forecast$mean, series = "Neural Network") +
-  autolayer(ts_electricity[, 2], series = "Historical Data") +
+  autolayer(ts_electricity_war[, 2], series = "Historical Data") +
   ggtitle("Electricity - Neural Network") +
   ylab("Price (cents/kWh)")
 
 autoplot(nn.cov.gas.forecast$mean, series = "Neural Network") +
-  autolayer(ts_gas_equiv[, 1], series = "Historical Data") +
+  autolayer(ts_gas_equiv_war[, 1], series = "Historical Data") +
   ggtitle("Natural Gas - Neural Network") +
   ylab("Price (cents/kWh)")
 ```
@@ -754,12 +754,12 @@ autoplot(nn.cov.gas.forecast$mean, series = "Neural Network") +
 # neutral network model, temperature, fourier, UKRWAR performance
 
 # neural network model performance for electricity data
-nn_cov_e_perf <- ts_electricity[, 2] %>% 
+nn_cov_e_perf <- ts_electricity_war[, 2] %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(nn.cov.e.forecast$mean)
 
 # neural network model performance for gas data
-nn_cov_gas_perf <- ts_gas_equiv[, 1] %>% 
+nn_cov_gas_perf <- ts_gas_equiv_war[, 1] %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(nn.cov.gas.forecast$mean)
 ```
@@ -769,7 +769,7 @@ Then we use seasonal arima model with temperature and fourier terms to model two
 ```{r}
 # sarima with temperature and fourier terms for electricity
 
-sarima.e.cov.forecast <- ts_electricity[, 2] %>% 
+sarima.e.cov.forecast <- ts_electricity_war[, 2] %>% 
   window(end = c(2022, 1)) %>% 
   auto.arima(seasonal = FALSE, 
              xreg = covariates_train_e[, -1]) %>% 
@@ -777,12 +777,12 @@ sarima.e.cov.forecast <- ts_electricity[, 2] %>%
            h = 12)
 
 autoplot(sarima.e.cov.forecast$mean, series = "ARIMA with Covariates") +
-  autolayer(ts_electricity[, 2], series = "Historical Data") +
+  autolayer(ts_electricity_war[, 2], series = "Historical Data") +
   ggtitle("Electricity - ARIMA with Covariates") +
   ylab("Price (cents/kWh)")
 
 # arima with covariates for gas
-sarima.gas.cov.forecast <- ts_gas_equiv[, 1] %>% 
+sarima.gas.cov.forecast <- ts_gas_equiv_war[, 1] %>% 
   window(end = c(2022, 1)) %>% 
   auto.arima(seasonal = FALSE,
              xreg = covariates_train_gas[, -1]) %>% 
@@ -790,7 +790,7 @@ sarima.gas.cov.forecast <- ts_gas_equiv[, 1] %>%
            h = 12)
 
 autoplot(sarima.gas.cov.forecast$mean, series = "SARIMA with Covariates") +
-  autolayer(ts_gas_equiv[, 1], series = "Historical Data") +
+  autolayer(ts_gas_equiv_war[, 1], series = "Historical Data") +
   ylab("Price (cents/kWh)") +
   ggtitle("Natural Gas - SARIMA with Covariates") +
   theme(plot.title = element_text(hjust = 0.05))
@@ -801,12 +801,12 @@ autoplot(sarima.gas.cov.forecast$mean, series = "SARIMA with Covariates") +
 #  Examine Arima with fourier's performance on electricity and NG data
 
 # model performance for electricity data
-sarima_cov_e_perf <- ts_electricity[, 2] %>% 
+sarima_cov_e_perf <- ts_electricity_war[, 2] %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(sarima.e.cov.forecast$mean)
 
 # model performance for gas data
-sarima_cov_gas_perf <- ts_gas_equiv[, 1] %>% 
+sarima_cov_gas_perf <- ts_gas_equiv_war[, 1] %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(sarima.gas.cov.forecast$mean)
 
@@ -836,7 +836,7 @@ colnames(cov_test_nofour) <- c("UKRWAR", "temperature")
 
 ```{r}
 # plot these together
-ts_electricity[, 2] %>% 
+ts_electricity %>% 
   window(start = c(2016, 1)) %>% 
   autoplot(series = "Historical Series") +
   autolayer(nn.e.forecast$mean, series = "Neural Network") +
@@ -851,7 +851,7 @@ ts_electricity[, 2] %>%
   theme_classic()
 
   
-ts_gas_equiv[, 1] %>% 
+ts_gas_equiv %>% 
   window(start = c(2016, 1)) %>% 
   autoplot(series = "Historical Series") +
   autolayer(nn.gas.forecast$mean, series = "Neural Network") +
@@ -943,19 +943,19 @@ kbl(scores.gas,
 
 ```{r}
 
-e.forecast.2324 <- ts_electricity[, 2] %>% 
+e.forecast.2324 <- ts_electricity_war[, 2] %>% 
   stlf(h = 12)
 
-gas.forecast.2324 <- ts_gas_equiv[, 1] %>% 
+gas.forecast.2324 <- ts_gas_equiv_war[, 1] %>% 
   stlf(h = 12)
 
 e.forecast.2324$mean %>% 
   autoplot() +
   autolayer(e.forecast.2324$mean, series = "electricity forecast for 23-24") +
   autolayer(gas.forecast.2324$mean, series = "gas forecast for 23-24") +
-  autolayer(window(ts_electricity[, 2], start = c(2017, 1)), 
+  autolayer(window(ts_electricity_war[, 2], start = c(2017, 1)), 
             series = "historical data for electricity") +
-   autolayer(window(ts_gas_equiv[, 1], start = c(2017, 1)), 
+   autolayer(window(ts_gas_equiv_war[, 1], start = c(2017, 1)), 
             series = "historical data for natural gas") +
   theme_classic() +
   ggtitle("Forecast of Electricity and Natural Gas Price for the Next 12 Months") +
