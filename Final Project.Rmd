@@ -780,7 +780,7 @@ nn_cov_gas_perf <- ts_gas_equiv_war[, 1] %>%
 
 Then we use seasonal arima model with temperature and fourier terms to model two series. UKRWAR is excluded because R reports no suitable ARIMA model when UKRWAR is included. Function used: auto.arima(xreg)
 
-```{r}
+```{r, warning=FALSE}
 # sarima with temperature and fourier terms for electricity
 
 sarima.e.cov.forecast <- ts_electricity_war[, 2] %>% 
