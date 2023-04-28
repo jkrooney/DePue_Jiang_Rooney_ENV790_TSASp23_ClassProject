@@ -798,9 +798,9 @@ autoplot(sarima.gas.cov.forecast$mean, series = "SARIMA with Covariates") +
 ```
 
 ```{r}
-#  Examine Arima with fourier's performance on electricity and NG data
+#Examine Arima with fouriers performance on electricity and NG data
 
-# model performance for electricity data
+#model performance for electricity data
 sarima_cov_e_perf <- ts_electricity_war[, 2] %>% 
   window(start = c(2022, 2)) %>% 
   accuracy(sarima.e.cov.forecast$mean)
