@@ -587,7 +587,7 @@ autoplot(nn.e.forecast$mean, series = "Neural Network") +
 autoplot(nn.gas.forecast$mean, series = "Neural Network") +
   autolayer(ts_gas_equiv, series = "Historical Data") +
   ggtitle("Natural Gas - Neural Network") +
-  ylab("Price (cents/kWh)")
+  ylab("Price (cents/kWh equiv)")
 ```
 
 ```{r }
@@ -619,6 +619,18 @@ tbats.gas.forecast <- ts_gas_equiv %>%
   window(end = c(2022, 1)) %>% 
   tbats() %>% 
   forecast(h = 12)
+
+autoplot(tbats.e.forecast$mean, series = "TBATS") +
+  autolayer(ts_electricity, series = "Historical Data") +
+  ggtitle("Electricity - TBATS") +
+  ylab("Price (cents/kWh)")
+
+autoplot(tbats.gas.forecast$mean, series = "TBATS") +
+  autolayer(ts_gas_equiv, series = "Historical Data") +
+  ggtitle("Natural Gas - TBATS") +
+  ylab("Price (cents/kWh equiv)")
+
+
 
 ```
 
