@@ -56,7 +56,7 @@ nc_electricity.df<-electricity_prices.df[228,4:(ncol(electricity_prices.df))] %>
   pivot_longer(cols=everything(), names_to = 'my_date', values_to = 'price_per_kWh')
 
 # examine whether there is missing value or not
-summary(nc_electricity.df)
+electric_summary<-summary(nc_electricity.df)
 # there is no missing value
 
 nc_electricity.df$price_per_kWh<-as.numeric(nc_electricity.df$price_per_kWh)
@@ -66,12 +66,99 @@ nc_electricity.df$price_per_kWh<-as.numeric(nc_electricity.df$price_per_kWh)
 
 natural_gas.df <- read.csv("./Data/NC_NaturalGas.csv", header = TRUE, skip=2,col.names = c("year", "price"))
 
-#Check for missing data. There is an extra row with an NA at the end of the data, so I removed it with na.omit
+#Check for missing data. There is an extra empty row with an NA at the very end of the dataset, so I removed it with na.omit
 
-summary(na.omit(natural_gas.df))
-str(natural_gas.df)
-
+gas_summary<-summarize(na.omit(natural_gas.df))
 ```
+
+
+```{r, echo=FALSE}
+#electric summary variables
+mean.elec<-round(mean(nc_electricity.df$price_per_kWh,na.rm = TRUE),2)
+
+length.elec<-length(nc_electricity.df$price_per_kWh)
+
+sd.elec<-round(sd(nc_electricity.df$price_per_kWh,na.rm = TRUE),2)
+
+median.elec<-round(median(nc_electricity.df$price_per_kWh,na.rm = TRUE),2)
+
+min.elec<-min(nc_electricity.df$price_per_kWh,na.rm = TRUE)
+
+max.elec<-max(nc_electricity.df$price_per_kWh,na.rm = TRUE)
+
+
+#create summary DF for electricity
+summary_elec<- cbind(length.elec, min.elec, max.elec, mean.elec, sd.elec, median.elec
+                  ) %>% 
+  as.data.frame()
+
+# rename columns
+colnames(summary_elec) <- c("Observations",
+                          "Min",
+                          "Max",
+                          "Mean Price",
+                         "Std. Dev.", 
+                         "Median Price"
+                            )
+
+#gas summary variables
+mean.gas<-round(mean(natural_gas.df$price,na.rm = TRUE),2)
+
+length.gas<-length(natural_gas.df$price)
+
+sd.gas<-round(sd(natural_gas.df$price,na.rm = TRUE),2)
+
+median.gas<-round(median(natural_gas.df$price,na.rm = TRUE),2)
+
+min.gas<-min(natural_gas.df$price,na.rm = TRUE)
+
+max.gas<-max(natural_gas.df$price,na.rm = TRUE)
+
+# create summary DF for gas
+summary_gas<- cbind(length.gas, min.gas, max.gas, mean.gas, sd.gas, median.gas
+                  ) %>% 
+  as.data.frame()
+
+# rename columns
+colnames(summary_gas) <- c("Observations",
+                          "Min",
+                          "Max",
+                          "Mean Price",
+                         "Std. Dev.", 
+                         "Median Price")
+
+summary_data<-rbind(summary_gas, summary_elec)
+
+summary_data$Variable<-c("Natural Gas ($/Mcf)","Electricity(cents/kWh)")
+
+summary_data<-summary_data[,c(7,1,2,3,4,5,6)]
+
+
+# generate a visualized table to use in the report
+kbl(summary_data,
+    caption = "Table 1: Summary Statistics",
+    digits = array(5, ncol(summary_data))) %>% 
+  kable_styling(full_width = FALSE, position = "center", 
+                latex_options = "hold_position") %>% 
+  kable_styling(latex_options = "striped")
+```
+
+```{r, results='asis', echo=FALSE}
+# show top 10 rows of data
+
+    d1 <- head(natural_gas.df, 10)
+    d2 <- head(nc_electricity.df,10)
+    
+   knitr::kables(
+     list(knitr::kable(d1, col.names=c("Date","$/Mcf"),valign = 't'
+    ),
+   
+    # the second kable() to set the digits option
+    knitr::kable(d2, col.names=c("Date","Cents/kWh"),digits = 2, valign = 't')
+  ),
+  caption = 'First 10 rows of Electricy & Natural Gas Datasets')
+```
+
 
 ##Analysis
 We first created initial time series objects and plotted them, along with ACF and PACF plots to gain an initial sense of what the series looked like and what seasonality they may have.  

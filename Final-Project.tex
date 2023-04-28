@@ -1,0 +1,542 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=2.54cm]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Visionary Final},
+  pdfauthor={Justin DePue, John Rooney, and Tony Jiang},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Visionary Final}
+\author{Justin DePue, John Rooney, and Tony Jiang}
+\date{2023-04-28}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+\begin{itemize}
+\tightlist
+\item
+  Knitting commands in code chunks:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{include\ =\ FALSE} - code is run, but neither code nor
+    results appear in knitted file
+  \item
+    \texttt{echo\ =\ FALSE} - code not included in knitted file, but
+    results are
+  \item
+    \texttt{eval\ =\ FALSE} - code is not run in the knitted file
+  \item
+    \texttt{message\ =\ FALSE} - messages do not appear in knitted file
+  \item
+    \texttt{warning\ =\ FALSE} - warnings do not appear\ldots{}
+  \item
+    \texttt{fig.cap\ =\ "..."} - adds a caption to graphical results
+  \end{itemize}
+\end{itemize}
+
+\#\#Introduction This study was born out of both curiosity and
+necessity. One of our teammates faced higher than expected energy bills
+this winter and was suddenly faced with the question of whether to
+shiver to save money or spend it on heating bills and be forced to eat
+Spaghetti-O's as sustenance. While spring has sprung and summer is on
+the horizon, we know that winter is coming and that we should prepare
+now in order that history not repeat itself.
+
+As students recently armed with the tools to conduct time series
+analysis and forecasting, we realized we could complete our final
+project while aiding our teammate with knowledge for the future. Our
+study question thus emerged: would it be more cost-effective to heat an
+apartment in North Carolina using electricity or a natural-gas powered
+heater?
+
+Full of optimism that we could complete a class requirement while doing
+some good for the world (for as Marvel taught us, when you help someone,
+you help everyone), we set out to find the data that would lead us to
+the answer we sought. Our journey led us to that great repository of
+energy knowledge, the US Energy Information Administration. There we
+found two datasets we felt confident would help us help our teammate:
+``North Carolina Price of Natural Gas Delivered to Residential Customers
+(Dollars Per Thousand Cubic Feet)'', which contained monthly data from
+January 1989 through January 2023, and ``Average Retail Price of
+Electricity by State and Sector'' which contained monthly data from
+January 2001 through January 2023.
+
+\#\#Data
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#electric summary variables}
+\NormalTok{mean.elec}\OtherTok{\textless{}{-}}\FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(nc\_electricity.df}\SpecialCharTok{$}\NormalTok{price\_per\_kWh,}\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}\DecValTok{2}\NormalTok{)}
+
+\NormalTok{length.elec}\OtherTok{\textless{}{-}}\FunctionTok{length}\NormalTok{(nc\_electricity.df}\SpecialCharTok{$}\NormalTok{price\_per\_kWh)}
+
+\NormalTok{sd.elec}\OtherTok{\textless{}{-}}\FunctionTok{round}\NormalTok{(}\FunctionTok{sd}\NormalTok{(nc\_electricity.df}\SpecialCharTok{$}\NormalTok{price\_per\_kWh,}\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}\DecValTok{2}\NormalTok{)}
+
+\NormalTok{median.elec}\OtherTok{\textless{}{-}}\FunctionTok{round}\NormalTok{(}\FunctionTok{median}\NormalTok{(nc\_electricity.df}\SpecialCharTok{$}\NormalTok{price\_per\_kWh,}\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}\DecValTok{2}\NormalTok{)}
+
+\NormalTok{min.elec}\OtherTok{\textless{}{-}}\FunctionTok{min}\NormalTok{(nc\_electricity.df}\SpecialCharTok{$}\NormalTok{price\_per\_kWh,}\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
+
+\NormalTok{max.elec}\OtherTok{\textless{}{-}}\FunctionTok{max}\NormalTok{(nc\_electricity.df}\SpecialCharTok{$}\NormalTok{price\_per\_kWh,}\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
+
+
+\CommentTok{\#create summary DF for electricity}
+\NormalTok{summary\_elec}\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(length.elec, min.elec, max.elec, mean.elec, sd.elec, median.elec}
+\NormalTok{                  ) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{as.data.frame}\NormalTok{()}
+
+\CommentTok{\# rename columns}
+\FunctionTok{colnames}\NormalTok{(summary\_elec) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Observations"}\NormalTok{,}
+                          \StringTok{"Min"}\NormalTok{,}
+                          \StringTok{"Max"}\NormalTok{,}
+                          \StringTok{"Mean Price"}\NormalTok{,}
+                         \StringTok{"Std. Dev."}\NormalTok{, }
+                         \StringTok{"Median Price"}
+\NormalTok{                            )}
+
+\CommentTok{\#gas summary variables}
+\NormalTok{mean.gas}\OtherTok{\textless{}{-}}\FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(natural\_gas.df}\SpecialCharTok{$}\NormalTok{price,}\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}\DecValTok{2}\NormalTok{)}
+
+\NormalTok{length.gas}\OtherTok{\textless{}{-}}\FunctionTok{length}\NormalTok{(natural\_gas.df}\SpecialCharTok{$}\NormalTok{price)}
+
+\NormalTok{sd.gas}\OtherTok{\textless{}{-}}\FunctionTok{round}\NormalTok{(}\FunctionTok{sd}\NormalTok{(natural\_gas.df}\SpecialCharTok{$}\NormalTok{price,}\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}\DecValTok{2}\NormalTok{)}
+
+\NormalTok{median.gas}\OtherTok{\textless{}{-}}\FunctionTok{round}\NormalTok{(}\FunctionTok{median}\NormalTok{(natural\_gas.df}\SpecialCharTok{$}\NormalTok{price,}\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}\DecValTok{2}\NormalTok{)}
+
+\NormalTok{min.gas}\OtherTok{\textless{}{-}}\FunctionTok{min}\NormalTok{(natural\_gas.df}\SpecialCharTok{$}\NormalTok{price,}\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
+
+\NormalTok{max.gas}\OtherTok{\textless{}{-}}\FunctionTok{max}\NormalTok{(natural\_gas.df}\SpecialCharTok{$}\NormalTok{price,}\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
+
+\CommentTok{\# create summary DF for gas}
+\NormalTok{summary\_gas}\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(length.gas, min.gas, max.gas, mean.gas, sd.gas, median.gas}
+\NormalTok{                  ) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{as.data.frame}\NormalTok{()}
+
+\CommentTok{\# rename columns}
+\FunctionTok{colnames}\NormalTok{(summary\_gas) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Observations"}\NormalTok{,}
+                          \StringTok{"Min"}\NormalTok{,}
+                          \StringTok{"Max"}\NormalTok{,}
+                          \StringTok{"Mean Price"}\NormalTok{,}
+                         \StringTok{"Std. Dev."}\NormalTok{, }
+                         \StringTok{"Median Price"}\NormalTok{)}
+
+\NormalTok{summary\_data}\OtherTok{\textless{}{-}}\FunctionTok{rbind}\NormalTok{(summary\_gas, summary\_elec)}
+
+\NormalTok{summary\_data}\SpecialCharTok{$}\NormalTok{Variable}\OtherTok{\textless{}{-}}\FunctionTok{c}\NormalTok{(}\StringTok{"Natural Gas ($/Mcf)"}\NormalTok{,}\StringTok{"Electricity(cents/kWh)"}\NormalTok{)}
+
+\NormalTok{summary\_data}\OtherTok{\textless{}{-}}\NormalTok{summary\_data[,}\FunctionTok{c}\NormalTok{(}\DecValTok{7}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{6}\NormalTok{)]}
+
+
+\CommentTok{\# generate a visualized table to use in the report}
+\FunctionTok{kbl}\NormalTok{(summary\_data,}
+    \AttributeTok{caption =} \StringTok{"Table 1: Summary Statistics"}\NormalTok{,}
+    \AttributeTok{digits =} \FunctionTok{array}\NormalTok{(}\DecValTok{5}\NormalTok{, }\FunctionTok{ncol}\NormalTok{(summary\_data))) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{kable\_styling}\NormalTok{(}\AttributeTok{full\_width =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{position =} \StringTok{"center"}\NormalTok{, }
+                \AttributeTok{latex\_options =} \StringTok{"hold\_position"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{kable\_styling}\NormalTok{(}\AttributeTok{latex\_options =} \StringTok{"striped"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}[!h]
+
+\caption{\label{tab:unnamed-chunk-1}Table 1: Summary Statistics}
+\centering
+\begin{tabular}[t]{l|r|r|r|r|r|r}
+\hline
+Variable & Observations & Min & Max & Mean Price & Std. Dev. & Median Price\\
+\hline
+\cellcolor{gray!6}{Natural Gas (\$/Mcf)} & \cellcolor{gray!6}{410} & \cellcolor{gray!6}{5.54} & \cellcolor{gray!6}{30.43} & \cellcolor{gray!6}{13.78} & \cellcolor{gray!6}{5.64} & \cellcolor{gray!6}{12.54}\\
+\hline
+Electricity(cents/kWh) & 265 & 7.53 & 13.51 & 10.22 & 1.30 & 10.41\\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# show top 10 rows of data}
+
+\NormalTok{    d1 }\OtherTok{\textless{}{-}} \FunctionTok{head}\NormalTok{(natural\_gas.df, }\DecValTok{10}\NormalTok{)}
+\NormalTok{    d2 }\OtherTok{\textless{}{-}} \FunctionTok{head}\NormalTok{(nc\_electricity.df,}\DecValTok{10}\NormalTok{)}
+    
+\NormalTok{   knitr}\SpecialCharTok{::}\FunctionTok{kables}\NormalTok{(}
+     \FunctionTok{list}\NormalTok{(knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(d1, }\AttributeTok{col.names=}\FunctionTok{c}\NormalTok{(}\StringTok{"Date"}\NormalTok{,}\StringTok{"$/Mcf"}\NormalTok{),}\AttributeTok{valign =} \StringTok{\textquotesingle{}t\textquotesingle{}}
+\NormalTok{    ),}
+   
+    \CommentTok{\# the second kable() to set the digits option}
+\NormalTok{    knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(d2, }\AttributeTok{col.names=}\FunctionTok{c}\NormalTok{(}\StringTok{"Date"}\NormalTok{,}\StringTok{"Cents/kWh"}\NormalTok{),}\AttributeTok{digits =} \DecValTok{2}\NormalTok{, }\AttributeTok{valign =} \StringTok{\textquotesingle{}t\textquotesingle{}}\NormalTok{)}
+\NormalTok{  ),}
+  \AttributeTok{caption =} \StringTok{\textquotesingle{}First 10 rows of Electricy \& Natural Gas Datasets\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}
+\caption{\label{tab:unnamed-chunk-2}First 10 rows of Electricy & Natural Gas Datasets}
+
+\begin{tabular}[t]{l|r}
+\hline
+Date & \$/Mcf\\
+\hline
+Jan-1989 & 6.17\\
+\hline
+Feb-1989 & 6.30\\
+\hline
+Mar-1989 & 6.29\\
+\hline
+Apr-1989 & 6.80\\
+\hline
+May-1989 & 6.99\\
+\hline
+Jun-1989 & 8.02\\
+\hline
+Jul-1989 & 8.71\\
+\hline
+Aug-1989 & 8.97\\
+\hline
+Sep-1989 & 8.68\\
+\hline
+Oct-1989 & 7.44\\
+\hline
+\end{tabular}
+\begin{tabular}[t]{l|r}
+\hline
+Date & Cents/kWh\\
+\hline
+Jan.2001 & 7.53\\
+\hline
+Feb.2001 & 7.77\\
+\hline
+Mar.2001 & 8.02\\
+\hline
+Apr.2001 & 8.00\\
+\hline
+May.2001 & 8.22\\
+\hline
+Jun.2001 & 8.19\\
+\hline
+Jul.2001 & 8.31\\
+\hline
+Aug.2001 & 8.35\\
+\hline
+Sep.2001 & 8.35\\
+\hline
+Oct.2001 & 8.67\\
+\hline
+\end{tabular}
+\end{table}
+
+\#\#Analysis We first created initial time series objects and plotted
+them, along with ACF and PACF plots to gain an initial sense of what the
+series looked like and what seasonality they may have.
+
+\includegraphics{Final-Project_files/figure-latex/plot initial time series-1.pdf}
+
+\includegraphics{Final-Project_files/figure-latex/plot elec and gas ts-1.pdf}
+
+We then decomposed the time series objects for further analysis.
+
+\includegraphics{Final-Project_files/figure-latex/decompose ts-1.pdf}
+\includegraphics{Final-Project_files/figure-latex/decompose ts-2.pdf}
+
+\includegraphics{Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-1.pdf}
+\includegraphics{Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-2.pdf}
+\includegraphics{Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-3.pdf}
+\includegraphics{Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-4.pdf}
+
+Several models were developed and tested to determine what would best
+fit the data we had and what may lead to the best forecast to determine
+whether heating via electricity or natural gas would be most
+cost-efficient in the upcoming winter. The five that were used were the
+Seasonal ARIMA, ARIMA with Fourier terms, Neural Networks, TBATS, and
+STL + EST.
+
+Each of these tests used functions from the ``forecast'' library and
+required the use of time series data which we created using the ``ts''
+function from the ``tseries'' library.
+
+While the Seasonal ARIMA was a logical first model to try, we quickly
+felt that the performance was not particularly strong.
+
+\includegraphics{Final-Project_files/figure-latex/Seasonal Arima-1.pdf}
+\includegraphics{Final-Project_files/figure-latex/Seasonal Arima-2.pdf}
+
+We decided to explore more advanced models that could handle the ARIMA
+with Fourier Terms model, Neural Networks, TBATS, and STL + EST. ARIMA
+with Fourier terms is known as a dynamic harmonic regression model with
+an ARMA error structure, using the ``fourier'' function from package
+``forecast'' to find terms that model seasonal components.
+
+\includegraphics{Final-Project_files/figure-latex/Arima with Fourier terms-1.pdf}
+\includegraphics{Final-Project_files/figure-latex/Arima with Fourier terms-2.pdf}
+
+Then we tried STL model
+\includegraphics{Final-Project_files/figure-latex/STL -1.pdf}
+\includegraphics{Final-Project_files/figure-latex/STL -2.pdf}
+
+Then we tried to use neural network model. We used nnetar() in forecast
+package. We figured out p and P arguments in nnetar() have significant
+impact on model performance. Therefore, we first tried to identify the
+optimal p and P conbination by trying different combinations.
+
+\begin{verbatim}
+##            ME      RMSE       MAE        MPE      MAPE      ACF1 Theil's U
+## 10 -1.1711676 1.2950681 1.1711676 -10.501320 10.501320 0.2845610 45.327277
+## 11 -0.8747622 0.9873096 0.8747622  -7.624166  7.624166 0.1874510  4.714693
+## 20 -1.0305814 1.1602401 1.0305814  -9.119368  9.119368 0.2985403 17.146479
+## 21 -0.8864306 1.0007090 0.8864306  -7.736742  7.736742 0.2062883  4.752475
+## 22 -0.8765816 0.9999967 0.8765816  -7.653383  7.653383 0.2136315  4.525570
+## 12 -0.8705705 0.9920435 0.8705705  -7.592814  7.592814 0.2041032  4.684720
+## 31 -0.8822567 1.0015038 0.8822567  -7.700592  7.700592 0.2254087  4.769239
+\end{verbatim}
+
+\begin{verbatim}
+##           ME     RMSE      MAE       MPE     MAPE      ACF1 Theil's U
+## 10 -2.290121 3.002818 2.395185 -33.52481 34.93356 0.6286304 18.470188
+## 11 -1.800175 2.259309 1.984368 -25.75572 27.97061 0.2949639  2.484188
+## 20 -2.469839 3.271987 2.666850 -39.62750 42.10910 0.6803329 11.559340
+## 21 -1.887130 2.218849 1.964267 -27.42957 28.23916 0.2355902  2.507142
+## 22 -2.029781 2.365095 2.071205 -30.25346 30.69823 0.2639827  2.699636
+## 12 -1.904641 2.314131 1.972261 -27.59615 28.31014 0.2764386  2.602489
+## 31 -1.904841 2.235465 1.964652 -27.94938 28.58405 0.2429978  2.544937
+## 32 -1.908856 2.238207 1.965641 -28.09742 28.70114 0.2533527  2.540051
+## 33 -2.078605 2.385349 2.150881 -31.43042 32.19133 0.1757300  2.520507
+\end{verbatim}
+
+We found that the combination 11 (p = 1 and P = 1) has the best modeling
+performance for electricity series, and the combination 32 (p = 3 and P
+= 2) has the best modeling performance for natural gas series. Then we
+use this combination to run the neural network model with fourier terms
+for elecricity series.
+
+\includegraphics{Final-Project_files/figure-latex/unnamed-chunk-8-1.pdf}
+\includegraphics{Final-Project_files/figure-latex/unnamed-chunk-8-2.pdf}
+
+Then we tried TBATS models for electricity and natural gas series
+\includegraphics{Final-Project_files/figure-latex/unnamed-chunk-10-1.pdf}
+\includegraphics{Final-Project_files/figure-latex/unnamed-chunk-10-2.pdf}
+
+Then we think Ukraine War should have a significant impact on natural
+gas price and probably eletricity gas too. Also, temperature should be a
+good regressor to include since utility bills normally fluctuate in the
+same direction with temperature. Therefore, we created two covariates:
+UKRWAR and temperature. \(UKRWAR\) is an indiciator variable with values
+of 0 and 1. Months before March 2022 have a value of 0, while months
+after and including March 2022 have a value of 1. The reason why we set
+the cutoff month at March 2002 despite the war started from last
+February is because the impact of the war on monthly natural gas price
+in February 2022 should be limited since the war started in late
+February. The temperature series is the monthly average temperature of
+Raleigh area. This is largest geographic level of historical temperature
+data.
+
+After creating all the covariates, we repeated our modeling but with
+covariates to improve the accuracy of the models. First we incorporated
+covariates to neural network model.
+
+\includegraphics{Final-Project_files/figure-latex/unnamed-chunk-13-1.pdf}
+\includegraphics{Final-Project_files/figure-latex/unnamed-chunk-13-2.pdf}
+
+Then we use seasonal arima model with temperature and fourier terms to
+model two series. UKRWAR is excluded because R reports no suitable ARIMA
+model when UKRWAR is included. Function used: auto.arima(xreg)
+
+\includegraphics{Final-Project_files/figure-latex/unnamed-chunk-15-1.pdf}
+\includegraphics{Final-Project_files/figure-latex/unnamed-chunk-15-2.pdf}
+
+\#\#Summary and Conclusions
+
+\hypertarget{use-ets-to-model-not-finished-i-dont-know-how-to-do-this-maybe-we-dont-need-to-include-this}{%
+\subsection{Use ETS to model -- not finished -- I don't know how to do
+this, maybe we don't need to include
+this}\label{use-ets-to-model-not-finished-i-dont-know-how-to-do-this-maybe-we-dont-need-to-include-this}}
+
+\hypertarget{compare-performance-scores-and-generate-tables-for-use}{%
+\subsubsection{compare performance scores and generate tables for
+use}\label{compare-performance-scores-and-generate-tables-for-use}}
+
+\includegraphics{Final-Project_files/figure-latex/unnamed-chunk-18-1.pdf}
+\includegraphics{Final-Project_files/figure-latex/unnamed-chunk-18-2.pdf}
+
+\begin{verbatim}
+## The best model for electricity by RMSE is:  STL
+\end{verbatim}
+
+\begin{table}[!h]
+
+\caption{\label{tab:unnamed-chunk-18}Forecast Accuracy for NC Residential Electricity Price}
+\centering
+\begin{tabular}[t]{l|r|r|r|r|r|r|r}
+\hline
+  & ME & RMSE & MAE & MPE & MAPE & ACF1 & Theil's U\\
+\hline
+SARIMA & -0.67702 & 0.83764 & 0.70998 & -5.83726 & 6.12612 & 0.25988 & 2.73983\\
+\hline
+ARIMA with Fourier & -0.69901 & 0.87542 & 0.69901 & -6.04750 & 6.04750 & 0.08222 & 2.82856\\
+\hline
+\cellcolor{red}{STL} & \cellcolor{red}{-0.58551} & \cellcolor{red}{0.76708} & \cellcolor{red}{0.63447} & \cellcolor{red}{-5.01390} & \cellcolor{red}{5.43949} & \cellcolor{red}{0.25835} & \cellcolor{red}{2.36056}\\
+\hline
+Neural Network & -1.04692 & 1.21150 & 1.04692 & -9.38345 & 9.38345 & 0.17605 & 3.05874\\
+\hline
+TBATS & -0.74971 & 0.89063 & 0.75658 & -6.50522 & 6.56626 & 0.23462 & 2.86546\\
+\hline
+Neural Network with Covariates & -0.93650 & 1.11811 & 0.96839 & -8.35125 & 8.63093 & 0.40539 & 2.53827\\
+\hline
+SARIMA with Tem and Fourier & -0.67930 & 0.81795 & 0.69585 & -5.83257 & 5.97890 & 0.26220 & 2.92127\\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{verbatim}
+## The best model for natural gas by RMSE is:  STL
+\end{verbatim}
+
+\begin{table}[!h]
+
+\caption{\label{tab:unnamed-chunk-18}Forecast Accuracy for NC Residential Natural Gas Price}
+\centering
+\begin{tabular}[t]{l|r|r|r|r|r|r|r}
+\hline
+  & ME & RMSE & MAE & MPE & MAPE & ACF1 & Theil's U\\
+\hline
+SARIMA & -1.67902 & 1.97784 & 1.67902 & -23.35174 & 23.35174 & -0.15535 & 1.81675\\
+\hline
+ARIMA with Fourier & -1.73517 & 2.31199 & 1.83980 & -25.17030 & 26.24979 & 0.57850 & 3.12540\\
+\hline
+\cellcolor{red}{STL} & \cellcolor{red}{-1.04788} & \cellcolor{red}{1.35599} & \cellcolor{red}{1.11314} & \cellcolor{red}{-14.03428} & \cellcolor{red}{14.80904} & \cellcolor{red}{-0.33348} & \cellcolor{red}{1.28849}\\
+\hline
+Neural Network & -1.77537 & 2.18869 & 1.85250 & -25.66242 & 26.47198 & 0.53020 & 2.74593\\
+\hline
+TBATS & -1.72858 & 1.89245 & 1.72858 & -24.53539 & 24.53539 & -0.32231 & 2.08610\\
+\hline
+Neural Network with Covariates & -1.21583 & 1.67415 & 1.43423 & -15.07725 & 17.81655 & 0.48082 & 2.10601\\
+\hline
+SARIMA with Tem and Fourier & -1.63275 & 1.79495 & 1.63275 & -21.52013 & 21.52013 & -0.01071 & 1.95239\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{use-stl-to-model-electricity-and-natural-gas-for-the-next-12-month}{%
+\subsubsection{Use STL to model electricity and natural gas for the next
+12
+month}\label{use-stl-to-model-electricity-and-natural-gas-for-the-next-12-month}}
+
+\includegraphics{Final-Project_files/figure-latex/unnamed-chunk-19-1.pdf}
+
+\end{document}
