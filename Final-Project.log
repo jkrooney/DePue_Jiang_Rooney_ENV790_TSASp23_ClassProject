@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.4.28)  28 APR 2023 14:35
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.4.28)  28 APR 2023 15:56
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -441,8 +441,14 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 28
 File: l3backend-pdftex.def 2023-04-19 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count308
 \l__pdf_internal_box=\box72
+) (./Final-Project.aux
+
+LaTeX Warning: Label `tab:unnamed-chunk-2' multiply defined.
+
+
+LaTeX Warning: Label `tab:unnamed-chunk-22' multiply defined.
+
 )
-No file Final-Project.aux.
 \openout1 = `Final-Project.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 84.
@@ -504,6 +510,7 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 Package hyperref Info: Link coloring OFF on input line 84.
+(./Final-Project.out) (./Final-Project.out)
 \@outlinefile=\write3
 \openout3 = `Final-Project.out'.
 
@@ -536,8 +543,14 @@ File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 LaTeX Font Info:    Trying to load font information for U+msb on input line 86.
 (c:/Users/jd925/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+) (./Final-Project.toc
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 1.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 1.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 1.
 )
-No file Final-Project.toc.
 \tf@toc=\write4
 \openout4 = `Final-Project.toc'.
 
@@ -548,73 +561,246 @@ File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 99.
 (c:/Users/jd925/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 148.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 148.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 148.
+) [1
 
-LaTeX Warning: `!h' float specifier changed to `!ht'.
+{c:/Users/jd925/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/Users/jd925/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{c:/Users/jd925/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}]
+<Final-Project_files/figure-latex/plot initial time series-1.pdf, id=33, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/plot initial time series-1.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/plot initial time series-1.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/plot initial time series-1.pdf  used on input line 225.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+[2]
+<Final-Project_files/figure-latex/plot elec and gas ts-1.pdf, id=40, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/plot elec and gas ts-1.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/plot elec and gas ts-1.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/plot elec and gas ts-1.pdf  used on input line 227.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+[3 <./Final-Project_files/figure-latex/plot initial time series-1.pdf>]
+<Final-Project_files/figure-latex/decompose ts-1.pdf, id=51, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/decompose ts-1.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/decompose ts-1.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/decompose ts-1.pdf  used on input line 231.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+<Final-Project_files/figure-latex/decompose ts-2.pdf, id=52, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/decompose ts-2.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/decompose ts-2.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/decompose ts-2.pdf  used on input line 232.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 
+Underfull \hbox (badness 10000) in paragraph at lines 231--233
+[][]
+ []
 
-Overfull \hbox (34.16638pt too wide) in paragraph at lines 191--191
-[]\T1/lmr/m/n/10 Table 3:
+[4 <./Final-Project_files/figure-latex/plot elec and gas ts-1.pdf>] [5 <./Final-Project_files/figure-latex/decompose ts-1.pdf>]
+<Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-1.pdf, id=72, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-1.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-1.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-1.pdf  used on input line 234.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+<Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-2.pdf, id=73, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-2.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-2.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-2.pdf  used on input line 235.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+<Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-3.pdf, id=74, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-3.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-3.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-3.pdf  used on input line 236.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+<Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-4.pdf, id=75, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-4.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-4.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-4.pdf  used on input line 237.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 234--238
+[][]
  []
 
 
-Overfull \hbox (31.66624pt too wide) in paragraph at lines 191--191
-[][]\T1/lmr/m/n/10 Sample
+Underfull \hbox (badness 10000) in paragraph at lines 234--238
+[]
  []
 
 
-Overfull \hbox (8.0555pt too wide) in paragraph at lines 191--191
-\T1/lmr/m/n/10 of
+Underfull \hbox (badness 10000) in paragraph at lines 234--238
+[]
+ []
+
+[6 <./Final-Project_files/figure-latex/decompose ts-2.pdf>] [7 <./Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-1.pdf>] [8 <./Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-2.pdf>] [9 <./Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-3.pdf>]
+<Final-Project_files/figure-latex/Seasonal Arima-1.pdf, id=117, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/Seasonal Arima-1.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/Seasonal Arima-1.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/Seasonal Arima-1.pdf  used on input line 253.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+<Final-Project_files/figure-latex/Seasonal Arima-2.pdf, id=118, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/Seasonal Arima-2.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/Seasonal Arima-2.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/Seasonal Arima-2.pdf  used on input line 254.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 253--255
+[][]
+ []
+
+[10 <./Final-Project_files/figure-latex/ACF and PACF of electricity and natural gas-4.pdf>] [11 <./Final-Project_files/figure-latex/Seasonal Arima-1.pdf>]
+<Final-Project_files/figure-latex/Arima with Fourier terms-1.pdf, id=138, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/Arima with Fourier terms-1.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/Arima with Fourier terms-1.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/Arima with Fourier terms-1.pdf  used on input line 262.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+<Final-Project_files/figure-latex/Arima with Fourier terms-2.pdf, id=139, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/Arima with Fourier terms-2.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/Arima with Fourier terms-2.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/Arima with Fourier terms-2.pdf  used on input line 263.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 262--264
+[][]
+ []
+
+[12 <./Final-Project_files/figure-latex/Seasonal Arima-2.pdf>] [13 <./Final-Project_files/figure-latex/Arima with Fourier terms-1.pdf>]
+<Final-Project_files/figure-latex/STL -1.pdf, id=160, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/STL -1.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/STL -1.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/STL -1.pdf  used on input line 269.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+<Final-Project_files/figure-latex/STL -2.pdf, id=161, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/STL -2.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/STL -2.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/STL -2.pdf  used on input line 270.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+
+Overfull \hbox (8.88733pt too wide) in paragraph at lines 269--271
+[]    []
+ []
+
+[14 <./Final-Project_files/figure-latex/Arima with Fourier terms-2.pdf>] [15 <./Final-Project_files/figure-latex/STL -1.pdf>] [16 <./Final-Project_files/figure-latex/STL -2.pdf>]
+<Final-Project_files/figure-latex/unnamed-chunk-8-1.pdf, id=190, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/unnamed-chunk-8-1.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/unnamed-chunk-8-1.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/unnamed-chunk-8-1.pdf  used on input line 344.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+<Final-Project_files/figure-latex/unnamed-chunk-9-1.pdf, id=191, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/unnamed-chunk-9-1.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/unnamed-chunk-9-1.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/unnamed-chunk-9-1.pdf  used on input line 345.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+
+Overfull \hbox (8.88733pt too wide) in paragraph at lines 343--346
+[]    []
+ []
+
+[17 <./Final-Project_files/figure-latex/unnamed-chunk-8-1.pdf>]
+<Final-Project_files/figure-latex/unnamed-chunk-11-1.pdf, id=202, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/unnamed-chunk-11-1.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/unnamed-chunk-11-1.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/unnamed-chunk-11-1.pdf  used on input line 353.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+[18 <./Final-Project_files/figure-latex/unnamed-chunk-9-1.pdf>]
+<Final-Project_files/figure-latex/unnamed-chunk-12-1.pdf, id=212, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/unnamed-chunk-12-1.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/unnamed-chunk-12-1.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/unnamed-chunk-12-1.pdf  used on input line 357.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 357--359
+[][]
  []
 
 
-Overfull \hbox (34.99976pt too wide) in paragraph at lines 191--191
-\T1/lmr/m/n/10 Cleaned
+Underfull \hbox (badness 10000) in paragraph at lines 357--359
+
  []
 
+[19 <./Final-Project_files/figure-latex/unnamed-chunk-11-1.pdf>]
+<Final-Project_files/figure-latex/unnamed-chunk-15-1.pdf, id=223, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/unnamed-chunk-15-1.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/unnamed-chunk-15-1.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/unnamed-chunk-15-1.pdf  used on input line 382.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+[20{c:/Users/jd925/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc} <./Final-Project_files/figure-latex/unnamed-chunk-12-1.pdf>]
+<Final-Project_files/figure-latex/unnamed-chunk-16-1.pdf, id=234, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/unnamed-chunk-16-1.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/unnamed-chunk-16-1.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/unnamed-chunk-16-1.pdf  used on input line 385.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 
-Overfull \hbox (21.80559pt too wide) in paragraph at lines 191--191
-\T1/lmr/m/n/10 Elec-
+Overfull \hbox (8.88733pt too wide) in paragraph at lines 384--386
+[]    [] 
  []
 
+[21 <./Final-Project_files/figure-latex/unnamed-chunk-15-1.pdf>]
+<Final-Project_files/figure-latex/unnamed-chunk-18-1.pdf, id=244, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/unnamed-chunk-18-1.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/unnamed-chunk-18-1.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/unnamed-chunk-18-1.pdf  used on input line 397.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+[22 <./Final-Project_files/figure-latex/unnamed-chunk-16-1.pdf>]
+<Final-Project_files/figure-latex/unnamed-chunk-19-1.pdf, id=254, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/unnamed-chunk-19-1.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/unnamed-chunk-19-1.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/unnamed-chunk-19-1.pdf  used on input line 400.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 
-Overfull \hbox (18.36127pt too wide) in paragraph at lines 191--191
-\T1/lmr/m/n/10 tric-
+Overfull \hbox (8.88733pt too wide) in paragraph at lines 399--401
+[]    [] 
  []
 
+[23 <./Final-Project_files/figure-latex/unnamed-chunk-18-1.pdf>]
+<Final-Project_files/figure-latex/unnamed-chunk-22-1.pdf, id=264, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/unnamed-chunk-22-1.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/unnamed-chunk-22-1.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/unnamed-chunk-22-1.pdf  used on input line 419.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+<Final-Project_files/figure-latex/unnamed-chunk-22-2.pdf, id=265, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/unnamed-chunk-22-2.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/unnamed-chunk-22-2.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/unnamed-chunk-22-2.pdf  used on input line 420.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 
-Overfull \hbox (11.66696pt too wide) in paragraph at lines 191--191
-\T1/lmr/m/n/10 ity
+Underfull \hbox (badness 10000) in paragraph at lines 419--421
+[]
  []
 
+[24 <./Final-Project_files/figure-latex/unnamed-chunk-19-1.pdf>]
+Overfull \vbox (25.4007pt too high) has occurred while \output is active []
 
-Overfull \hbox (21.52802pt too wide) in paragraph at lines 191--191
-\T1/lmr/m/n/10 Data 
- []
-
-
-Overfull \hbox (136.12311pt too wide) in paragraph at lines 193--218
+[25 <./Final-Project_files/figure-latex/unnamed-chunk-22-1.pdf> <./Final-Project_files/figure-latex/unnamed-chunk-22-2.pdf>]
+Overfull \hbox (13.68318pt too wide) in paragraph at lines 430--449
  [][] 
  []
 
-! Extra }, or forgotten \endgroup.
-\endwraptable ...kip \egroup \box \z@ \fi \egroup 
-                                                  \WF@floatstyhook \def \wid...
-l.218 \end{wraptable}
-                      
-Here is how much of TeX's memory you used:
- 12552 strings out of 477961
- 199347 string characters out of 5836922
- 1860068 words of memory out of 5000000
- 32546 multiletter control sequences out of 15000+600000
- 555364 words of font info for 72 fonts, out of 8000000 for 9000
- 14 hyphenation exceptions out of 8191
- 75i,9n,76p,318b,382s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-!  ==> Fatal error occurred, no output PDF file produced!
+Overfull \hbox (27.01651pt too wide) in paragraph at lines 459--478
+ [][] 
+ []
+
+<Final-Project_files/figure-latex/unnamed-chunk-23-1.pdf, id=292, 469.755pt x 325.215pt>
+File: Final-Project_files/figure-latex/unnamed-chunk-23-1.pdf Graphic file (type pdf)
+<use Final-Project_files/figure-latex/unnamed-chunk-23-1.pdf>
+Package pdftex.def Info: Final-Project_files/figure-latex/unnamed-chunk-23-1.pdf  used on input line 487.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+[26] [27 <./Final-Project_files/figure-latex/unnamed-chunk-23-1.pdf>] (./Final-Project.aux)
+
+LaTeX Warning: There were multiply-defined labels.
+
+Package rerunfilecheck Info: File `Final-Project.out' has not changed.
+(rerunfilecheck)             Checksum: 5F4F31002B1A80903CF2C81F43CCC4CF;1368.
+ ) 
+Here is how much of TeX's memory you used:
+ 12798 strings out of 477961
+ 211364 string characters out of 5836922
+ 1870068 words of memory out of 5000000
+ 32710 multiletter control sequences out of 15000+600000
+ 558362 words of font info for 73 fonts, out of 8000000 for 9000
+ 14 hyphenation exceptions out of 8191
+ 75i,9n,76p,652b,472s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<c:/Users/jd925/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/Users/jd925/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/Users/jd925/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><c:/Users/jd925/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/Users/jd925/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/jd925/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb><c:/Users/jd925/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
+Output written on Final-Project.pdf (27 pages, 338561 bytes).
+PDF statistics:
+ 358 PDF objects out of 1000 (max. 8388607)
+ 261 compressed objects within 3 object streams
+ 42 named destinations out of 1000 (max. 500000)
+ 150 words of extra memory for PDF output out of 10000 (max. 10000000)
+

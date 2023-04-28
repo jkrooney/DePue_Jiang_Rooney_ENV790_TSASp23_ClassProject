@@ -18,7 +18,7 @@ fig_width: 4
   -  `fig.cap = "..."` - adds a caption to graphical results
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
 
@@ -72,7 +72,7 @@ gas_summary<-summarize(na.omit(natural_gas.df))
 ```
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE,fig.pos='H'}
 #electric summary variables
 mean.elec<-round(mean(nc_electricity.df$price_per_kWh,na.rm = TRUE),2)
 
@@ -139,35 +139,33 @@ kbl(summary_data,
     caption = "Table 1: Summary Statistics",
     digits = array(5, ncol(summary_data))) %>% 
   kable_styling(full_width = FALSE, position = "center", 
-                latex_options = "hold_position") %>% 
+                latex_options = "HOLD_position") %>% 
   kable_styling(latex_options = "striped")
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.pos='H'}
 # show top 10 rows of data
 
     d1 <- head(natural_gas.df, 10)
     d2 <- head(nc_electricity.df,10)
     
-   
-     
-     kbl(d1,
-    caption = "Sample of Cleaned Natural Gas Data",
-    digits = array(5, ncol(d1))) %>% 
-  kable_styling(full_width = FALSE, position = "left", 
-                latex_options = "hold_position") %>% 
+ p1<-kbl(d1,
+    caption = "Sample of Cleaned Natural Gas Data") %>% 
+  kable_styling(full_width = FALSE, position = "center", 
+                latex_options = "HOLD_position") %>% 
   kable_styling(latex_options = "striped")
   
-  kbl(d2,
-    caption = "Sample of Cleaned Electricity Data",
-    digits = array(5, ncol(d2))) %>% 
-  kable_styling(full_width = FALSE, position = "float_left", 
-                latex_options = "hold_position") %>% 
+p2<-kbl(d2,
+    caption = "Sample of Cleaned Electricity Data") %>% 
+  kable_styling(full_width = FALSE, position="center", wraptable_width = "1cm",
+                latex_options = "HOLD_position") %>% 
   kable_styling(latex_options = "striped")
   
-   
+par(mfrow=c(1,2))
+p1
+p2
+  
 ```
-
 
 ##Analysis
 We first created initial time series objects and plotted them, along with ACF and PACF plots to gain an initial sense of what the series looked like and what seasonality they may have.  
@@ -379,8 +377,13 @@ arima_four_gas_perf <- ts_gas_equiv %>%
   accuracy(arima.gas.four.forecast$mean)
 
 ```
+&nbsp;
+&nbsp;
 
 Then we tried STL model
+
+&nbsp;
+&nbsp;
 ```{r STL , echo=FALSE}
 
 # STL for electricity
@@ -418,11 +421,14 @@ stl_gas_perf <- ts_gas_equiv %>%
   accuracy(stl.gas.forecast$mean)
 
 ```
+&nbsp;
+&nbsp;
 
 Then we tried to use neural network model. We used nnetar() in forecast package. We figured out p and P arguments in nnetar() have significant impact on model performance. Therefore, we first tried to identify the optimal p and P conbination by trying different combinations.
 
-
-```{r, echo=FALSE }
+&nbsp;
+&nbsp;
+```{r, echo=FALSE, position="H" }
 # find the optimal p and P values for neural network without fourier for electricity series
 
 ## p = 1, P = 0
@@ -512,15 +518,22 @@ nn.e.31.score <- ts_electricity %>%
 nn.e.scores <- rbind(nn.e.10.score, nn.e.11.score, nn.e.20.score, nn.e.21.score,
                    nn.e.22.score, nn.e.12.score, nn.e.31.score)
 
-row.names(nn.e.scores) <- c("10", "11", "20", "21", "22", "12", "31")
+row.names(nn.e.scores) <- c("1/0", "1/1", "2/0", "2/1", "2/2", "1/2", "3/1")
 
-nn.e.scores ## 11 has the lowest RMSE and 12 has the lowest MAPE
+## 11 has the lowest RMSE and 12 has the lowest MAPE
 
-# we can do the same thing to natural gas. Do we want to??
+
+kbl(nn.e.scores,
+    caption = "Natural Gas Neural Net Forecast Accuracy using Various Seasonal Lag Inputs (p/P)",
+    digits = array(5, ncol(nn.e.scores))) %>% 
+  kable_styling(full_width = FALSE, position = "center", 
+                latex_options = "HOLD_position") %>% 
+  kable_styling(latex_options = "striped"
+                )
 
 ```
 
-```{r, echo=FALSE }
+```{r, echo=FALSE, position="H"}
 # find the optimal p and P values for neural network without fourier for natural gas series
 
 ## p = 1, P = 0
@@ -635,14 +648,27 @@ nn.gas.scores <- rbind(nn.gas.10.score, nn.gas.11.score, nn.gas.20.score, nn.gas
                    nn.gas.22.score, nn.gas.12.score, nn.gas.31.score, nn.gas.32.score, 
                    nn.gas.33.score)
 
-row.names(nn.gas.scores) <- c("10", "11", "20", "21", "22", "12", "31", "32", "33")
+row.names(nn.gas.scores) <- c("1/0", "1/1", "2/0", "2/1", "2/2", "1/2", "3/1", "3/2", "33")
 
-nn.gas.scores ## 32 has the lowest RMSE and 11 has the lowest MAPE
+
+
+kbl(nn.gas.scores,
+    caption = "Natural Gas Neural Net Forecast Accuracy using Various Seasonal Lag Inputs (p/P)",
+    digits = array(5, ncol(nn.gas.scores))) %>% 
+  kable_styling(full_width = FALSE, position = "center", 
+                latex_options = "HOLD_position") %>% 
+  kable_styling(latex_options = "striped")
+
+ ## 3/2 has the lowest RMSE and 1/1 has the lowest MAPE
 
 ```
+&nbsp;
+&nbsp;
 
 We found that the combination 11 (p = 1 and P = 1) has the best modeling performance for electricity series, and the combination 32 (p = 3 and P = 2) has the best modeling performance for natural gas series. Then we use this combination to run the neural network model with fourier terms for elecricity series.
 
+&nbsp;
+&nbsp;
 ```{r, echo=FALSE }
 #Use Neural Network and fourier to model
 
@@ -683,11 +709,15 @@ autoplot(nn.e.forecast$mean, series = "Neural Network") +
   ggtitle("Electricity - Neural Network") +
   ylab("Price (cents/kWh)")
 
+
+```
+```{r}
 autoplot(nn.gas.forecast$mean, series = "Neural Network") +
   autolayer(ts_gas_equiv, series = "Historical Data") +
   ggtitle("Natural Gas - Neural Network") +
   ylab("Price (cents/kWh equiv)")
 ```
+
 
 ```{r, echo=FALSE }
 # neutral network model performance
@@ -702,8 +732,14 @@ nn_gas_perf <- ts_gas_equiv %>%
   window(start = c(2022, 2)) %>% 
   accuracy(nn.gas.forecast$mean)
 ```
+&nbsp;
+&nbsp;
 
 Then we tried TBATS models for electricity and natural gas series
+
+&nbsp;
+&nbsp;
+
 ```{r, echo=FALSE, warning=FALSE}
 # TBATS model
 
@@ -723,15 +759,20 @@ autoplot(tbats.e.forecast$mean, series = "TBATS") +
   autolayer(ts_electricity, series = "Historical Data") +
   ggtitle("Electricity - TBATS") +
   ylab("Price (cents/kWh)")
+```
+
+&nbsp;
+&nbsp;
+
+```{r, echo=FALSE}
 
 autoplot(tbats.gas.forecast$mean, series = "TBATS") +
   autolayer(ts_gas_equiv, series = "Historical Data") +
   ggtitle("Natural Gas - TBATS") +
   ylab("Price (cents/kWh equiv)")
-
-
-
 ```
+&nbsp;
+&nbsp;
 
 ```{r, echo=FALSE}
 # TBATS model performance
@@ -746,8 +787,11 @@ tbats_gas_perf <- ts_gas_equiv%>%
   window(start = c(2022, 2)) %>% 
   accuracy(tbats.gas.forecast$mean)
 ```
-
+&nbsp;
+&nbsp;
 Then we think Ukraine War should have a significant impact on natural gas price and probably eletricity gas too. Also, temperature should be a good regressor to include since utility bills normally fluctuate in the same direction with temperature. Therefore, we created two covariates: UKRWAR and temperature. $UKRWAR$ is an indiciator variable with values of 0 and 1. Months before March 2022 have a value of 0, while months after and including March 2022 have a value of 1. The reason why we set the cutoff month at March 2002 despite the war started from last February is because the impact of the war on monthly natural gas price in February 2022 should be limited since the war started in late February. The temperature series is the monthly average temperature of Raleigh area. This is largest geographic level of historical temperature data.
+&nbsp;
+&nbsp;
 ```{r, echo=FALSE}
 # add covariates
 
@@ -830,8 +874,13 @@ fourier_full_gas <- fourier(window(ts_gas_equiv_war[, 1],
 covariates_full_gas <- cbind(ts_gas_equiv_war[, 2], ts_temperature, fourier_full_gas)
   
 ```
+&nbsp;
+&nbsp;
 
-After creating all the covariates, we repeated our modeling but with covariates to improve the accuracy of the models. First we incorporated covariates to neural network model. 
+After creating all the covariates, we repeated our modeling but with covariates to improve the accuracy of the models. First we incorporated covariates to neural network model.
+
+&nbsp;
+&nbsp;
 
 ```{r, echo=FALSE, warning=FALSE}
 # Use Neural Network, temperature, UKRWAR, and fourier to model
@@ -857,12 +906,19 @@ autoplot(nn.cov.e.forecast$mean, series = "Neural Network") +
   ggtitle("Electricity - Neural Network") +
   ylab("Price (cents/kWh)")
 
+```
+
+&nbsp;
+&nbsp;
+```{r, echo=FALSE}
 autoplot(nn.cov.gas.forecast$mean, series = "Neural Network") +
   autolayer(ts_gas_equiv_war[, 1], series = "Historical Data") +
   ggtitle("Natural Gas - Neural Network") +
   ylab("Price (cents/kWh)")
 ```
 
+&nbsp;
+&nbsp;
 ```{r, echo=FALSE, warning=FALSE }
 # neutral network model, temperature, fourier, UKRWAR performance
 
@@ -876,8 +932,13 @@ nn_cov_gas_perf <- ts_gas_equiv_war[, 1] %>%
   window(start = c(2022, 2)) %>% 
   accuracy(nn.cov.gas.forecast$mean)
 ```
+&nbsp;
+&nbsp;
 
 Then we use seasonal arima model with temperature and fourier terms to model two series. UKRWAR is excluded because R reports no suitable ARIMA model when UKRWAR is included. Function used: auto.arima(xreg)
+
+&nbsp;
+&nbsp;
 
 ```{r, echo=FALSE, warning=FALSE}
 # sarima with temperature and fourier terms for electricity
@@ -902,14 +963,20 @@ sarima.gas.cov.forecast <- ts_gas_equiv_war[, 1] %>%
   forecast(xreg = window(covariates_full_gas[, -1], start = c(2022, 2)), 
            h = 12)
 
+```
+
+&nbsp;
+&nbsp;
+```{r, echo=FALSE}
 autoplot(sarima.gas.cov.forecast$mean, series = "SARIMA with Covariates") +
   autolayer(ts_gas_equiv_war[, 1], series = "Historical Data") +
   ylab("Price (cents/kWh)") +
   ggtitle("Natural Gas - SARIMA with Covariates") +
   theme(plot.title = element_text(hjust = 0.05))
-
 ```
 
+&nbsp;
+&nbsp;
 ```{r, echo=FALSE, warning=FALSE}
 #Examine Arima with fourier performance on electricity and NG data model performance for electricity data
 sarima_cov_e_perf <- ts_electricity_war[, 2] %>% 
@@ -922,7 +989,8 @@ sarima_cov_gas_perf <- ts_gas_equiv_war[, 1] %>%
   accuracy(sarima.gas.cov.forecast$mean)
 
 ```
-
+&nbsp;
+&nbsp;
 
 ##Summary and Conclusions
 
@@ -941,7 +1009,8 @@ colnames(cov_test_nofour) <- c("UKRWAR", "temperature")
 
 ```
 
-
+&nbsp;
+&nbsp;
 
 ### compare performance scores and generate tables for use
 
@@ -1049,6 +1118,8 @@ kbl(scores.gas,
                 stripe_index = best.gas.model,
                 stripe_color = "red")
 ```
+&nbsp;
+&nbsp;
 
 ### Use STL to model electricity and natural gas for the next 12 month
 
