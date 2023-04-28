@@ -788,7 +788,9 @@ tbats_gas_perf <- ts_gas_equiv%>%
 ```
 &nbsp;
 &nbsp;
+
 As we thought about other ways to model our time series, we realized that the Ukraine War has had a significant impact on natural gas prices, and likely eletricity price, too. We additionally realized temperature would be a good regressor to include since utility bills normally fluctuate in the same direction as temperature. Therefore, we created two covariates: UKRWAR and temperature. $UKRWAR$ is an indicator variable with values of 0 and 1. Months before March 2022 have a value of 0, while months after and including March 2022 have a value of 1. The reason why we set the cutoff month at March 2022 despite the war starting in February of that year is because the impact of the war on monthly natural gas prices in February 2022 should be limited because of the war beginning that month. The temperature series is the monthly average temperature of the Raleigh area. This is largest geographic level of historical temperature data.
+
 &nbsp;
 &nbsp;
 ```{r, echo=FALSE}
